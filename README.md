@@ -18,7 +18,6 @@ QT4 - http://qt-project.org/
 
 ###Building###
 
-
 ```bash
 # Clone the repo
 git clone https://github.com/KristianKarl/GraphWalkerEditor
@@ -36,3 +35,10 @@ make
 # Run the unit tests
 ./gwe_unit_test
 ```
+
+###Source code structure###
+
+Inspired by the neat structure imposed by Maven for Java code,
+this repo tries to put the source code files, more or less,
+in the same organisation.
+
