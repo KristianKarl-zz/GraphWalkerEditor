@@ -10,11 +10,9 @@ const qreal Pi = 3.14;
 EdgeItem::EdgeItem ( VertexItem* startItem, VertexItem* endItem,
     QGraphicsItem* parent, QGraphicsScene* scene )
   : QGraphicsLineItem ( parent, scene ) {
+  setFlag ( QGraphicsItem::ItemIsSelectable, true );
   myStartItem = startItem;
   myEndItem = endItem;
-  setFlag ( QGraphicsItem::ItemIsSelectable, true );
-  myColor = Qt::black;
-  setPen ( QPen ( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
   label = new LabelItem ( "<EdgeLabel>", this );
 }
 
@@ -86,15 +84,21 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
   arrowHead.clear();
   arrowHead << line().p1() << arrowP1 << arrowP2;
 
+  if ( isSelected() ) {
+    setPen ( QPen ( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
+  } else {
+    setPen ( QPen ( myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
+  }
+
   painter->drawLine ( line() );
   painter->drawPolygon ( arrowHead );
+}
 
-  if ( isSelected() ) {
-    painter->setPen ( QPen ( myColor, 1, Qt::DashLine ) );
-    QLineF myLine = line();
-    myLine.translate ( 0, 4.0 );
-    painter->drawLine ( myLine );
-    myLine.translate ( 0, -8.0 );
-    painter->drawLine ( myLine );
+void EdgeItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
+  if ( mouseEvent->button() == Qt::RightButton ) {
+    return;
+  } else if ( mouseEvent->button() == Qt::LeftButton ) {
+    setSelected(true);
   }
 }
+

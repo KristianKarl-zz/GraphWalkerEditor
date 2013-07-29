@@ -41,6 +41,7 @@ class EdgeItem : public QGraphicsLineItem {
     void updatePosition();
 
   protected:
+    void mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent );
     void paint ( QPainter* painter, const QStyleOptionGraphicsItem* option,
                  QWidget* widget = 0 );
 
