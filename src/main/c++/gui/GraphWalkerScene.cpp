@@ -64,6 +64,7 @@ void GraphWalkerScene::loadScene() {
   }
 
   //int width = GA.boundingBox().width(), height = GA.boundingBox().height();
+  update();
 }
 
 void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
@@ -78,7 +79,6 @@ void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
     return;
   }
 
-  loadGraph();
   loadScene();
 }
 
