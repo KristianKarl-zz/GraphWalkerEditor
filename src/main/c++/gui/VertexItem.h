@@ -27,8 +27,12 @@ class VertexItem : public QObject, public QGraphicsPolygonItem {
     }
 
     ogdf::node get_ogdf_node();
+    void set_ogdf_node(ogdf::node n) {
+      ogdf_node = n;
+    }
 
     void setLabel ( const QString& );
+    QString getLabel();
 
     void setKeyWord ( const GrapwWalker::Keywords& );
     void addKeyWord ( const GrapwWalker::Keywords& );

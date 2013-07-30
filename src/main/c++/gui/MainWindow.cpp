@@ -20,14 +20,12 @@ MainWindow::MainWindow ( const QString& graph_file ) {
 }
 
 void MainWindow::initialize() {
-  createActions();
-  createMenus();
-  createToolbars();
-
   scene = new GraphWalkerScene ( this );
   scene->setSceneRect ( QRectF ( 0, 0, 5000, 5000 ) );
 
-  //scene->setSceneRect ( -200, -200, 400, 400 );
+  createActions();
+  createMenus();
+  createToolbars();
 
   QHBoxLayout* layout = new QHBoxLayout;
   view = new GraphWalkerWidget ( scene );
@@ -42,10 +40,6 @@ void MainWindow::initialize() {
 
   connect ( scene, SIGNAL ( itemInserted ( VertexItem* ) ),
             this, SLOT ( itemInserted ( VertexItem* ) ) );
-}
-
-void MainWindow::newFile() {
-  scene->clear();
 }
 
 void MainWindow::open() {
@@ -134,17 +128,20 @@ void MainWindow::about() {
            "use of the graphics framework." ) );
 }
 
-
 void MainWindow::createActions() {
   newAct = new QAction ( tr ( "&New" ), this );
   newAct->setShortcuts ( QKeySequence::New );
   newAct->setStatusTip ( tr ( "Create a new file" ) );
-  connect ( newAct, SIGNAL ( triggered() ), this, SLOT ( newFile() ) );
+  connect ( newAct, SIGNAL ( triggered() ), scene, SLOT ( newGraph() ) );
 
   openAct = new QAction ( tr ( "&Open..." ), this );
   openAct->setShortcuts ( QKeySequence::Open );
   openAct->setStatusTip ( tr ( "Open an existing file" ) );
   connect ( openAct, SIGNAL ( triggered() ), this, SLOT ( open() ) );
+
+  hierarchicalLayoutAction = new QAction ( tr ( "&Hierarchical layout" ), this );
+  hierarchicalLayoutAction->setStatusTip ( tr ( "Peforms an automatic hierarchical layout of the graph" ) );
+  connect ( hierarchicalLayoutAction, SIGNAL ( triggered() ), scene, SLOT ( hierarchicalLayout() ) );
 
   deleteAction = new QAction ( QIcon ( ":/images/delete.png" ),
       tr ( "&Delete" ), this );
@@ -171,6 +168,9 @@ void MainWindow::createMenus() {
   fileMenu->addAction ( openAct );
   fileMenu->addSeparator();
   fileMenu->addAction ( exitAction );
+
+  layoutMenu = menuBar()->addMenu ( tr ( "&Layout" ) );
+  layoutMenu->addAction ( hierarchicalLayoutAction );
 
   aboutMenu = menuBar()->addMenu ( tr ( "&Help" ) );
   aboutMenu->addAction ( aboutAction );

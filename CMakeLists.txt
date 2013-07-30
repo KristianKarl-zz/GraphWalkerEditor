@@ -31,7 +31,7 @@ FILE(GLOB_RECURSE SOURCE_FILES src/main/c++/*.cpp)
 FILE(GLOB_RECURSE MOC_HDR_FILES src/main/c++/gui/*.h)
 FILE(GLOB_RECURSE TEST_SOURCE_FILES src/test/c++/*.cpp)
 
-include_directories( ..  src src/main/c++/gui, src/main/c++/graphwalker )
+include_directories( ..  src src/main/c++/gui, src/main/c++/graphwalker , src/main/c++/ogdf )
 set(GWE_RESOURCES src/main/resources/gwe.qrc)
 
 # generate rules for building source files from the resources

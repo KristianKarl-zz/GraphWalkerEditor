@@ -36,6 +36,8 @@ class GraphWalkerScene : public QGraphicsScene {
 
   public slots:
     void setMode ( Mode mode );
+    void hierarchicalLayout();
+    void newGraph();
 
   signals:
     void itemInserted ( VertexItem* item );
@@ -49,6 +51,7 @@ class GraphWalkerScene : public QGraphicsScene {
   private:
     bool isItemChange ( int type );
     void loadGraph();
+    void loadScene();
     VertexItem* getNode ( ogdf::node source );
 
     ogdf::GraphAttributes graphAttributes;

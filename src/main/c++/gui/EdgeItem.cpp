@@ -106,3 +106,11 @@ void EdgeItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
   update();
 }
 
+void EdgeItem::setLabel ( const QString& str ) {
+  label->setPlainText ( str );
+}
+
+QString EdgeItem::getLabel() {
+  return label->toPlainText();
+}
+

@@ -30,7 +30,6 @@ class MainWindow : public QMainWindow {
     MainWindow ( const QString& graph_file );
 
   private slots:
-    void newFile();
     void open();
     void deleteItem();
     void pointerGroupClicked ( int id );
@@ -57,15 +56,19 @@ class MainWindow : public QMainWindow {
     GraphWalkerScene* scene;
     GraphWalkerWidget* view;
 
-    QAction *newAct;
-    QAction *openAct;
+    QAction* newAct;
+    QAction* openAct;
     QAction* exitAction;
+
+    QAction* hierarchicalLayoutAction;
+
     QAction* addAction;
     QAction* deleteAction;
 
     QAction* aboutAction;
 
     QMenu* fileMenu;
+    QMenu* layoutMenu;
     QMenu* aboutMenu;
 
     QToolBar* editToolBar;

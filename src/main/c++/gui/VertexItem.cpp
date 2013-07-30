@@ -5,12 +5,12 @@
 #include "LabelItem.h"
 
 VertexItem::VertexItem ( ogdf::node n, QGraphicsItem* parent, QGraphicsScene* scene )
-  : ogdf_node( n ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
+  : ogdf_node ( n ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
   init ( "" );
 }
 
 VertexItem::VertexItem ( const QString& name, QGraphicsItem* parent, QGraphicsScene* scene )
-  : ogdf_node( 0 ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
+  : ogdf_node ( 0 ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
   init ( name );
 }
 
@@ -194,3 +194,6 @@ ogdf::node VertexItem::get_ogdf_node() {
   return ogdf_node;
 }
 
+QString VertexItem::getLabel() {
+  return label->toPlainText();
+}

@@ -3,6 +3,7 @@
 
 #include "GraphWalkerScene.h"
 #include "EdgeItem.h"
+#include "Layout.h"
 
 GraphWalkerScene::GraphWalkerScene ( QObject* parent )
   : QGraphicsScene ( parent ) {
@@ -17,27 +18,35 @@ GraphWalkerScene::GraphWalkerScene ( QObject* parent )
 }
 
 void GraphWalkerScene::loadGraph() {
-//   VertexItem* item = new VertexItem ();
-//   addItem ( item );
-//   item->setPos ( width() / 2, height() / 2 );
-}
+  graph.clear();
 
-void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
-  ogdf::Graph G;
-  ogdf::GraphAttributes GA ( G,
-      ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics |
-      ogdf::GraphAttributes::nodeLabel | ogdf::GraphAttributes::edgeStyle |
-      ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
-      ogdf::GraphAttributes::edgeLabel );
+  foreach ( QGraphicsItem * item, items() ) {
+    VertexItem* vertex = dynamic_cast<VertexItem*> ( item );
 
-  if ( ! ogdf::GraphIO::readGML ( GA, G, file_name.absoluteFilePath().toStdString() ) ) {
-    qWarning() << "Could not read: " << file_name.absoluteFilePath();
-    return;
+    if ( vertex ) {
+      ogdf::node v = graph.newNode();
+      vertex->set_ogdf_node ( v );
+
+      graphAttributes.x ( v ) = vertex->pos().x();
+      graphAttributes.y ( v ) = vertex->pos().y();
+      graphAttributes.width ( v ) = vertex->boundingRect().width();
+      graphAttributes.height ( v ) = vertex->boundingRect().height();
+      graphAttributes.label ( v ) = vertex->getLabel().toStdString();
+    }
   }
 
-  graphAttributes = GA;
-  graph = G;
+  foreach ( QGraphicsItem * item, items() ) {
+    EdgeItem* edge = dynamic_cast<EdgeItem*> ( item );
 
+    if ( edge ) {
+      ogdf::edge e = graph.newEdge ( edge->startItem()->get_ogdf_node(), edge->endItem()->get_ogdf_node() );
+      graphAttributes.label ( e ) = edge->getLabel().toStdString();
+    }
+  }
+}
+
+void GraphWalkerScene::loadScene() {
+  clear();
   ogdf::node n;
   forall_nodes ( n, graph ) {
     VertexItem* item = new VertexItem ( n );
@@ -54,7 +63,30 @@ void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
     addItem ( new EdgeItem ( source, target ) );
   }
 
+  //int width = GA.boundingBox().width(), height = GA.boundingBox().height();
 }
+
+void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
+  graphAttributes = ogdf::GraphAttributes ( graph,
+      ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics |
+      ogdf::GraphAttributes::nodeLabel | ogdf::GraphAttributes::edgeStyle |
+      ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
+      ogdf::GraphAttributes::edgeLabel );
+
+  if ( ! ogdf::GraphIO::readGML ( graphAttributes, graph, file_name.absoluteFilePath().toStdString() ) ) {
+    qWarning() << "Could not read: " << file_name.absoluteFilePath();
+    return;
+  }
+
+  loadGraph();
+  loadScene();
+}
+
+void GraphWalkerScene::newGraph() {
+  graph.clear();
+  clear();
+}
+
 
 VertexItem* GraphWalkerScene::getNode ( ogdf::node source ) {
   foreach ( QGraphicsItem * item, items() ) {
@@ -100,13 +132,21 @@ void GraphWalkerScene::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) 
     return;
   }
 
-  VertexItem* item;
+  VertexItem* item = 0;
+  ogdf::node v = 0;
 
   switch ( myMode ) {
   case InsertItem:
-    item = new VertexItem ( "<VertexLabel>" );
-    addItem ( item );
+    v = graph.newNode();
+    item = new VertexItem ( v );
     item->setPos ( mouseEvent->scenePos() );
+    item->setLabel ( "<VertexLabel>" );
+
+    graphAttributes.x ( v ) = item->pos().x();
+    graphAttributes.y ( v ) = item->pos().y();
+    //graphAttributes.label ( item->getLabel().toStdString().c_str() );
+
+    addItem ( item );
     emit itemInserted ( item );
     break;
 
@@ -164,6 +204,8 @@ void GraphWalkerScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent 
       }
       else {
         EdgeItem* arrow = new EdgeItem ( startItem, endItem );
+        graph.newEdge ( startItem->get_ogdf_node(), endItem->get_ogdf_node() );
+
         arrow->setColor ( myLineColor );
         startItem->addEdgeItem ( arrow );
         endItem->addEdgeItem ( arrow );
@@ -187,3 +229,10 @@ bool GraphWalkerScene::isItemChange ( int type ) {
 
   return false;
 }
+
+void GraphWalkerScene::hierarchicalLayout() {
+  loadGraph();
+  Layout::hierarchical ( graphAttributes );
+  loadScene();
+}
+

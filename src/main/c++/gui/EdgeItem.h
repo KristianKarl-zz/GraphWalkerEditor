@@ -38,6 +38,9 @@ class EdgeItem : public QGraphicsLineItem {
       return myEndItem;
     }
 
+    void setLabel ( const QString& );
+    QString getLabel();
+
     void updatePosition();
 
   protected:
