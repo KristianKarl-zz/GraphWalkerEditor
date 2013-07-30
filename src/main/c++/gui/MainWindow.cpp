@@ -10,6 +10,14 @@
 const int InsertTextButton = 10;
 
 MainWindow::MainWindow() {
+  initialize();
+}
+
+MainWindow::MainWindow ( const QString& graph_file ) {
+  initialize();
+}
+
+void MainWindow::initialize() {
   createActions();
   createMenus();
   createToolbars();
@@ -33,6 +41,7 @@ MainWindow::MainWindow() {
   connect ( scene, SIGNAL ( itemInserted ( VertexItem* ) ),
             this, SLOT ( itemInserted ( VertexItem* ) ) );
 }
+
 
 void MainWindow::deleteItem() {
   foreach ( QGraphicsItem * item, scene->selectedItems() ) {

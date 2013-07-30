@@ -27,6 +27,7 @@ class MainWindow : public QMainWindow {
 
   public:
     MainWindow();
+    MainWindow(const QString& graph_file);
 
   private slots:
     void deleteItem();
@@ -40,6 +41,7 @@ class MainWindow : public QMainWindow {
     void about();
 
   private:
+    void initialize();
     void createActions();
     void createMenus();
     void createToolbars();
