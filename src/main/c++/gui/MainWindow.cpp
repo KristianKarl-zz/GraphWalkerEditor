@@ -27,7 +27,7 @@ void MainWindow::initialize() {
   scene = new GraphWalkerScene ( this );
   scene->setSceneRect ( QRectF ( 0, 0, 5000, 5000 ) );
 
-  scene->setSceneRect ( -200, -200, 400, 400 );
+  //scene->setSceneRect ( -200, -200, 400, 400 );
 
   QHBoxLayout* layout = new QHBoxLayout;
   view = new GraphWalkerWidget ( scene );

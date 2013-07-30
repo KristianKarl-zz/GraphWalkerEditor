@@ -6,8 +6,7 @@
 
 VertexItem::VertexItem ( ogdf::node n, QGraphicsItem* parent, QGraphicsScene* scene )
   : ogdf_node( n ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
-  setKeyWord ( GrapwWalker::START_NODE );
-  init ( "Start" );
+  init ( "" );
 }
 
 VertexItem::VertexItem ( const QString& name, QGraphicsItem* parent, QGraphicsScene* scene )

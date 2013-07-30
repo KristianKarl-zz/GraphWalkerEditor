@@ -14,6 +14,7 @@ EdgeItem::EdgeItem ( VertexItem* startItem, VertexItem* endItem,
   myStartItem = startItem;
   myEndItem = endItem;
   label = new LabelItem ( "", this );
+  setZValue(-1000.0);
 }
 
 QRectF EdgeItem::boundingRect() const {
@@ -43,7 +44,7 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
     QWidget* ) {
   if ( myStartItem->collidesWithItem ( myEndItem ) )
     return;
-  if ( myStartItem->polygon().isEmpty() || myEndItem->polygon().isEmpty() )
+  if ( myEndItem->polygon().isEmpty() )
     return;
 
   QPen myPen = pen();
@@ -76,7 +77,7 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
   double angle = ::acos ( line().dx() / line().length() );
 
   if ( line().dy() >= 0 )
-    angle = ( Pi * 2 ) - angle;
+    angle = ( Pi * 3 ) - angle;
 
   QPointF arrowP1 = line().p1() + QPointF ( sin ( angle + Pi / 3 ) * arrowSize,
       cos ( angle + Pi / 3 ) * arrowSize );
