@@ -2,6 +2,10 @@
 #define DIAGRAMSCENE_H
 
 #include <QtGui>
+
+#include <ogdf/basic/Graph.h>
+#include <ogdf/basic/GraphAttributes.h>
+
 #include "VertexItem.h"
 
 class GraphWalkerScene : public QGraphicsScene {
@@ -28,6 +32,8 @@ class GraphWalkerScene : public QGraphicsScene {
     void setItemColor ( const QColor& color );
     void setFont ( const QFont& font );
 
+    void loadGraph ( const QFileInfo& file_name );
+
   public slots:
     void setMode ( Mode mode );
 
@@ -43,7 +49,10 @@ class GraphWalkerScene : public QGraphicsScene {
   private:
     bool isItemChange ( int type );
     void loadGraph();
-    void loadGraph ( const QFileInfo& );
+    VertexItem* getNode ( ogdf::node source );
+
+    ogdf::GraphAttributes graphAttributes;
+    ogdf::Graph graph;
 
     Mode myMode;
     bool leftButtonDown;

@@ -3,6 +3,8 @@
 
 #include <QtGui>
 
+#include <ogdf/basic/Graph.h>
+
 #include "GraphWalker.h"
 
 class EdgeItem;
@@ -14,7 +16,7 @@ class VertexItem : public QObject, public QGraphicsPolygonItem {
   public:
     enum { Type = UserType + 15 };
 
-    VertexItem ( QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
+    VertexItem ( ogdf::node n, QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
     VertexItem ( const QString& label,  QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
 
     void removeEdgeItem ( EdgeItem* edge );
@@ -23,6 +25,10 @@ class VertexItem : public QObject, public QGraphicsPolygonItem {
     QList<EdgeItem*> getEdges() {
       return edges;
     }
+
+    ogdf::node get_ogdf_node();
+
+    void setLabel ( const QString& );
 
     void setKeyWord ( const GrapwWalker::Keywords& );
     void addKeyWord ( const GrapwWalker::Keywords& );
@@ -48,8 +54,8 @@ class VertexItem : public QObject, public QGraphicsPolygonItem {
     void toggleSwitchModel();
 
   protected:
-    void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-    void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
+    void hoverEnterEvent ( QGraphicsSceneHoverEvent* event );
+    void hoverLeaveEvent ( QGraphicsSceneHoverEvent* event );
 
     void mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent );
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* );
@@ -64,6 +70,7 @@ class VertexItem : public QObject, public QGraphicsPolygonItem {
     QAction* blockAction;
     QAction* switchModelAction;
 
+    ogdf::node ogdf_node;
     QPolygonF myPolygon;
     LabelItem* label;
     int keywords;

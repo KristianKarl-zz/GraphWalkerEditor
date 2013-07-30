@@ -13,7 +13,7 @@ EdgeItem::EdgeItem ( VertexItem* startItem, VertexItem* endItem,
   setFlag ( QGraphicsItem::ItemIsSelectable, true );
   myStartItem = startItem;
   myEndItem = endItem;
-  label = new LabelItem ( "<EdgeLabel>", this );
+  label = new LabelItem ( "", this );
 }
 
 QRectF EdgeItem::boundingRect() const {
@@ -42,6 +42,8 @@ void EdgeItem::updatePosition() {
 void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
     QWidget* ) {
   if ( myStartItem->collidesWithItem ( myEndItem ) )
+    return;
+  if ( myStartItem->polygon().isEmpty() || myEndItem->polygon().isEmpty() )
     return;
 
   QPen myPen = pen();

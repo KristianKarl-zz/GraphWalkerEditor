@@ -27,9 +27,11 @@ class MainWindow : public QMainWindow {
 
   public:
     MainWindow();
-    MainWindow(const QString& graph_file);
+    MainWindow ( const QString& graph_file );
 
   private slots:
+    void newFile();
+    void open();
     void deleteItem();
     void pointerGroupClicked ( int id );
     void itemInserted ( VertexItem* item );
@@ -55,6 +57,8 @@ class MainWindow : public QMainWindow {
     GraphWalkerScene* scene;
     GraphWalkerWidget* view;
 
+    QAction *newAct;
+    QAction *openAct;
     QAction* exitAction;
     QAction* addAction;
     QAction* deleteAction;
@@ -79,6 +83,9 @@ class MainWindow : public QMainWindow {
     QToolButton* lineColorToolButton;
     QAction* fillAction;
     QAction* lineAction;
+
+    QFileInfo currentFile;
+
 };
 
 #endif

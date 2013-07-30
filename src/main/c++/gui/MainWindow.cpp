@@ -1,5 +1,6 @@
 #include <QtGui>
 #include <QLabel>
+#include <boost/graph/graph_concepts.hpp>
 
 #include "MainWindow.h"
 #include "VertexItem.h"
@@ -15,6 +16,7 @@ MainWindow::MainWindow() {
 
 MainWindow::MainWindow ( const QString& graph_file ) {
   initialize();
+  scene->loadGraph(graph_file);
 }
 
 void MainWindow::initialize() {
@@ -42,6 +44,28 @@ void MainWindow::initialize() {
             this, SLOT ( itemInserted ( VertexItem* ) ) );
 }
 
+void MainWindow::newFile() {
+  scene->clear();
+}
+
+void MainWindow::open() {
+  QString fileName = QFileDialog::getOpenFileName ( this, tr (
+                       "Open GML file" ), currentFile.absoluteFilePath(), tr ( "GML file (*.gml)" ) );
+
+  if ( !fileName.isEmpty() ) {
+    if ( currentFile.fileName() == fileName ) {
+      if ( QMessageBox::warning ( this,
+                                  tr ( "GWE question" ),
+                                  tr ( "Do you want to reload from file?" ),
+                                  QMessageBox::No | QMessageBox::Yes ) == QMessageBox::No ) {
+        return;
+      }
+    }
+
+    currentFile = QFileInfo ( fileName );
+    scene->loadGraph(currentFile);
+  }
+}
 
 void MainWindow::deleteItem() {
   foreach ( QGraphicsItem * item, scene->selectedItems() ) {
@@ -112,6 +136,16 @@ void MainWindow::about() {
 
 
 void MainWindow::createActions() {
+  newAct = new QAction ( tr ( "&New" ), this );
+  newAct->setShortcuts ( QKeySequence::New );
+  newAct->setStatusTip ( tr ( "Create a new file" ) );
+  connect ( newAct, SIGNAL ( triggered() ), this, SLOT ( newFile() ) );
+
+  openAct = new QAction ( tr ( "&Open..." ), this );
+  openAct->setShortcuts ( QKeySequence::Open );
+  openAct->setStatusTip ( tr ( "Open an existing file" ) );
+  connect ( openAct, SIGNAL ( triggered() ), this, SLOT ( open() ) );
+
   deleteAction = new QAction ( QIcon ( ":/images/delete.png" ),
       tr ( "&Delete" ), this );
   deleteAction->setShortcut ( tr ( "Delete" ) );
@@ -133,6 +167,9 @@ void MainWindow::createActions() {
 
 void MainWindow::createMenus() {
   fileMenu = menuBar()->addMenu ( tr ( "&File" ) );
+  fileMenu->addAction ( newAct );
+  fileMenu->addAction ( openAct );
+  fileMenu->addSeparator();
   fileMenu->addAction ( exitAction );
 
   aboutMenu = menuBar()->addMenu ( tr ( "&Help" ) );

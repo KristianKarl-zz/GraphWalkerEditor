@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <ogdf/fileformats/GraphIO.h>
 
 #include "GraphWalkerScene.h"
 #include "EdgeItem.h"
@@ -16,15 +17,55 @@ GraphWalkerScene::GraphWalkerScene ( QObject* parent )
 }
 
 void GraphWalkerScene::loadGraph() {
-  VertexItem* item = new VertexItem ();
-  addItem ( item );
-  item->setPos ( width() / 2, height() / 2 );
-  emit itemInserted ( item );
+//   VertexItem* item = new VertexItem ();
+//   addItem ( item );
+//   item->setPos ( width() / 2, height() / 2 );
+}
+
+void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
+  ogdf::Graph G;
+  ogdf::GraphAttributes GA ( G,
+      ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics |
+      ogdf::GraphAttributes::nodeLabel | ogdf::GraphAttributes::edgeStyle |
+      ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
+      ogdf::GraphAttributes::edgeLabel );
+
+  if ( ! ogdf::GraphIO::readGML ( GA, G, file_name.absoluteFilePath().toStdString() ) ) {
+    qWarning() << "Could not read: " << file_name.absoluteFilePath();
+    return;
+  }
+
+  graphAttributes = GA;
+  graph = G;
+
+  ogdf::node n;
+  forall_nodes ( n, graph ) {
+    VertexItem* item = new VertexItem ( n );
+    item->setPos ( graphAttributes.x ( n ), graphAttributes.y ( n ) );
+    item->setLabel ( graphAttributes.label ( n ).c_str() );
+    addItem ( item );
+  }
+
+  ogdf::edge e;
+  forall_edges ( e, graph ) {
+    VertexItem* source = getNode ( e->source() );
+    VertexItem* target = getNode ( e->target() );
+
+    addItem ( new EdgeItem ( source, target ) );
+  }
 
 }
 
-void GraphWalkerScene::loadGraph ( const QFileInfo& ) {
+VertexItem* GraphWalkerScene::getNode ( ogdf::node source ) {
+  foreach ( QGraphicsItem * item, items() ) {
+    VertexItem* v = dynamic_cast<VertexItem*> ( item );
 
+    if ( v && v->get_ogdf_node() == source ) {
+      return v;
+    }
+  }
+
+  return NULL;
 }
 
 

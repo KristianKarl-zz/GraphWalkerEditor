@@ -4,14 +4,14 @@
 #include "EdgeItem.h"
 #include "LabelItem.h"
 
-VertexItem::VertexItem ( QGraphicsItem* parent, QGraphicsScene* scene )
-  : QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
+VertexItem::VertexItem ( ogdf::node n, QGraphicsItem* parent, QGraphicsScene* scene )
+  : ogdf_node( n ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
   setKeyWord ( GrapwWalker::START_NODE );
   init ( "Start" );
 }
 
 VertexItem::VertexItem ( const QString& name, QGraphicsItem* parent, QGraphicsScene* scene )
-  : QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
+  : ogdf_node( 0 ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
   init ( name );
 }
 
@@ -186,3 +186,12 @@ void VertexItem::hoverEnterEvent ( QGraphicsSceneHoverEvent* event ) {
 void VertexItem::hoverLeaveEvent ( QGraphicsSceneHoverEvent* event ) {
   qDebug() << "hoverLeaveEvent in " << label->toPlainText();
 }
+
+void VertexItem::setLabel ( const QString& str ) {
+  label->setPlainText ( str );
+}
+
+ogdf::node VertexItem::get_ogdf_node() {
+  return ogdf_node;
+}
+
