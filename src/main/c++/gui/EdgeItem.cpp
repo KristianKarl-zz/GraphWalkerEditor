@@ -85,7 +85,7 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
   arrowHead << line().p1() << arrowP1 << arrowP2;
 
   if ( isSelected() ) {
-    setPen ( QPen ( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
+    setPen ( QPen ( myColor, 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
   } else {
     setPen ( QPen ( myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
   }
@@ -100,5 +100,6 @@ void EdgeItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
   } else if ( mouseEvent->button() == Qt::LeftButton ) {
     setSelected(true);
   }
+  update();
 }
 

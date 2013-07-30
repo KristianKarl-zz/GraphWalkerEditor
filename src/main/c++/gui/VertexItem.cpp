@@ -1,6 +1,4 @@
 #include <QtGui>
-#include <QMenu>
-#include <QAction>
 
 #include "VertexItem.h"
 #include "EdgeItem.h"
@@ -21,6 +19,7 @@ void VertexItem::init ( const QString& name ) {
   setFlag ( QGraphicsItem::ItemIsMovable, true );
   setFlag ( QGraphicsItem::ItemIsSelectable, true );
   setFlag ( QGraphicsItem::ItemSendsGeometryChanges, true );
+  setAcceptHoverEvents ( true );
 
   label = new LabelItem ( name, this );
 
@@ -178,4 +177,12 @@ void VertexItem::toggleBlocked() {
 void VertexItem::toggleSwitchModel() {
   switchModel = !switchModel;
   scene()->update();
+}
+
+void VertexItem::hoverEnterEvent ( QGraphicsSceneHoverEvent* event ) {
+  qDebug() << "hoverEnterEvent in " << label->toPlainText();
+}
+
+void VertexItem::hoverLeaveEvent ( QGraphicsSceneHoverEvent* event ) {
+  qDebug() << "hoverLeaveEvent in " << label->toPlainText();
 }

@@ -48,6 +48,9 @@ class VertexItem : public QObject, public QGraphicsPolygonItem {
     void toggleSwitchModel();
 
   protected:
+    void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
+    void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
+
     void mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent );
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* );
     void contextMenuEvent ( QPoint );

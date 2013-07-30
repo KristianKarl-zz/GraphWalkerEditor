@@ -135,6 +135,7 @@ void GraphWalkerScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent 
 
   line = 0;
   QGraphicsScene::mouseReleaseEvent ( mouseEvent );
+  update();
 }
 
 bool GraphWalkerScene::isItemChange ( int type ) {
