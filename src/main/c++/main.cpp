@@ -152,6 +152,6 @@ fatal    - Log fatals" );
     return 1;
   }
 
-  logStream << currentSystemTime() << "CLOSING - Shutdown code: " << return_code << std::endl;
+  logStream << currentSystemTime() << " CLOSING - Shutdown code: " << return_code << std::endl;
   return return_code;
 }
