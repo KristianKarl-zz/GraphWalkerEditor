@@ -21,7 +21,7 @@ MainWindow::MainWindow ( const QString& graph_file ) {
 
 void MainWindow::initialize() {
   scene = new GraphWalkerScene ( this );
-  scene->setSceneRect ( QRectF ( 0, 0, 5000, 5000 ) );
+  scene->setSceneRect ( QRectF ( 0, 0, 400, 400 ) );
 
   createActions();
   createMenus();

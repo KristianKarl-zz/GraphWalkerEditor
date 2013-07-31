@@ -7,7 +7,12 @@
 
 GraphWalkerScene::GraphWalkerScene ( QObject* parent )
   : QGraphicsScene ( parent ) {
-  //myMode = MoveItem;
+  graphAttributes = ogdf::GraphAttributes ( graph,
+      ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics |
+      ogdf::GraphAttributes::nodeLabel | ogdf::GraphAttributes::edgeStyle |
+      ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
+      ogdf::GraphAttributes::edgeLabel );
+
   myMode = InsertItem;
   line = 0;
   myItemColor = Qt::white;
@@ -63,17 +68,14 @@ void GraphWalkerScene::loadScene() {
     addItem ( new EdgeItem ( source, target ) );
   }
 
-  //int width = GA.boundingBox().width(), height = GA.boundingBox().height();
+  setSceneRect ( QRectF ( 0,
+                 0,
+                 graphAttributes.boundingBox().width(),
+                 graphAttributes.boundingBox().height() ) );
   update();
 }
 
 void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
-  graphAttributes = ogdf::GraphAttributes ( graph,
-      ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics |
-      ogdf::GraphAttributes::nodeLabel | ogdf::GraphAttributes::edgeStyle |
-      ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
-      ogdf::GraphAttributes::edgeLabel );
-
   if ( ! ogdf::GraphIO::readGML ( graphAttributes, graph, file_name.absoluteFilePath().toStdString() ) ) {
     qWarning() << "Could not read: " << file_name.absoluteFilePath();
     return;
