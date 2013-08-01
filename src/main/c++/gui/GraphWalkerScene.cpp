@@ -13,7 +13,7 @@ GraphWalkerScene::GraphWalkerScene ( QObject* parent )
       ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
       ogdf::GraphAttributes::edgeLabel );
 
-  myMode = InsertItem;
+  myMode = MoveItem;
   line = 0;
   myItemColor = Qt::white;
   myTextColor = Qt::black;
@@ -51,24 +51,15 @@ void GraphWalkerScene::loadGraph() {
 }
 
 void GraphWalkerScene::loadScene() {
-  clear();
   ogdf::node n;
   forall_nodes ( n, graph ) {
-    VertexItem* item = new VertexItem ( n );
-    item->setPos ( graphAttributes.x ( n ), graphAttributes.y ( n ) );
-    item->setLabel ( graphAttributes.label ( n ).c_str() );
-    if ( item->getLabel().compare ( "Start", Qt::CaseInsensitive ) == 0 ) {
-      item->setKeyWord(GrapwWalker::START_NODE);
+    foreach ( QGraphicsItem * item, items() ) {
+      VertexItem* vertex = dynamic_cast<VertexItem*> ( item );
+
+      if ( vertex && vertex->get_ogdf_node() == n ) {
+        vertex->setPos ( graphAttributes.x ( n ), graphAttributes.y ( n ) );
+      }
     }
-    addItem ( item );
-  }
-
-  ogdf::edge e;
-  forall_edges ( e, graph ) {
-    VertexItem* source = getNode ( e->source() );
-    VertexItem* target = getNode ( e->target() );
-
-    addItem ( new EdgeItem ( source, target ) );
   }
 
   setSceneRect ( QRectF ( 0,
