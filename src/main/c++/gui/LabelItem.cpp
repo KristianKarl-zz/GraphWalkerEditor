@@ -32,7 +32,7 @@ void LabelItem::focusOutEvent ( QFocusEvent* event ) {
   setFlag ( QGraphicsItem::ItemIsSelectable, false );
   scene()->update();
 
-  // Clear selectio
+  // Clear selection
   QTextCursor c = textCursor();
   c.clearSelection();
   setTextCursor ( c );
