@@ -13,7 +13,7 @@ EdgeItem::EdgeItem ( VertexItem* startItem, VertexItem* endItem,
   setFlag ( QGraphicsItem::ItemIsSelectable, true );
   myStartItem = startItem;
   myEndItem = endItem;
-  label = new LabelItem ( "", this );
+  label = new LabelItem ( "<EdgeLabel>", this );
   setZValue(-1000.0);
 }
 
@@ -104,6 +104,13 @@ void EdgeItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
     setSelected(true);
   }
   update();
+}
+
+void EdgeItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
+  if ( event->button() != Qt::LeftButton )
+    return;
+
+  label->mouseDoubleClickEvent ( event );
 }
 
 void EdgeItem::setLabel ( const QString& str ) {

@@ -31,6 +31,12 @@ void LabelItem::focusOutEvent ( QFocusEvent* event ) {
   setTextInteractionFlags ( Qt::NoTextInteraction );
   setFlag ( QGraphicsItem::ItemIsSelectable, false );
   scene()->update();
+
+  // Clear selectio
+  QTextCursor c = textCursor();
+  c.clearSelection();
+  setTextCursor ( c );
+
   emit lostFocus ( this );
   qDebug() << toPlainText() << " lost focus";
 }
@@ -44,4 +50,11 @@ void LabelItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
   if ( textInteractionFlags() == Qt::NoTextInteraction ) {
     setTextInteractionFlags ( Qt::TextEditorInteraction );
   }
+
+  setFocus();
+
+  // Select all
+  QTextCursor c = textCursor();
+  c.select ( QTextCursor::Document );
+  setTextCursor ( c );
 }
