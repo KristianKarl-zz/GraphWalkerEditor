@@ -12,6 +12,7 @@ const int InsertTextButton = 10;
 
 MainWindow::MainWindow() {
   initialize();
+  scene->newGraph();
 }
 
 MainWindow::MainWindow ( const QString& graph_file ) {

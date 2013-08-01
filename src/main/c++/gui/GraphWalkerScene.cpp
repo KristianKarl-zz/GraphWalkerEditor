@@ -57,6 +57,9 @@ void GraphWalkerScene::loadScene() {
     VertexItem* item = new VertexItem ( n );
     item->setPos ( graphAttributes.x ( n ), graphAttributes.y ( n ) );
     item->setLabel ( graphAttributes.label ( n ).c_str() );
+    if ( item->getLabel().compare ( "Start", Qt::CaseInsensitive ) == 0 ) {
+      item->setKeyWord(GrapwWalker::START_NODE);
+    }
     addItem ( item );
   }
 
@@ -87,6 +90,10 @@ void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
 void GraphWalkerScene::newGraph() {
   graph.clear();
   clear();
+  VertexItem* item = new VertexItem (graph.newNode());
+  item->setLabel("Start");
+  item->setKeyWord(GrapwWalker::START_NODE);
+  addItem ( item );
 }
 
 
@@ -107,8 +114,7 @@ void GraphWalkerScene::setLineColor ( const QColor& color ) {
   myLineColor = color;
 
   if ( isItemChange ( EdgeItem::Type ) ) {
-    EdgeItem* item =
-      qgraphicsitem_cast<EdgeItem*> ( selectedItems().first() );
+    EdgeItem* item = qgraphicsitem_cast<EdgeItem*> ( selectedItems().first() );
     item->setColor ( myLineColor );
     update();
   }
