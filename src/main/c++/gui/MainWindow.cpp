@@ -17,7 +17,7 @@ MainWindow::MainWindow() {
 
 MainWindow::MainWindow ( const QString& graph_file ) {
   initialize();
-  scene->loadGraph(graph_file);
+  scene->loadGraph ( graph_file );
 }
 
 void MainWindow::initialize() {
@@ -45,20 +45,20 @@ void MainWindow::initialize() {
 
 void MainWindow::open() {
   QString fileName = QFileDialog::getOpenFileName ( this, tr (
-                       "Open GML file" ), currentFile.absoluteFilePath(), tr ( "GML file (*.gml)" ) );
+        "Open GML file" ), currentFile.absoluteFilePath(), tr ( "GML file (*.gml)" ) );
 
   if ( !fileName.isEmpty() ) {
     if ( currentFile.fileName() == fileName ) {
       if ( QMessageBox::warning ( this,
-                                  tr ( "GWE question" ),
-                                  tr ( "Do you want to reload from file?" ),
-                                  QMessageBox::No | QMessageBox::Yes ) == QMessageBox::No ) {
+           tr ( "GWE question" ),
+           tr ( "Do you want to reload from file?" ),
+           QMessageBox::No | QMessageBox::Yes ) == QMessageBox::No ) {
         return;
       }
     }
 
     currentFile = QFileInfo ( fileName );
-    scene->loadGraph(currentFile);
+    scene->loadGraph ( currentFile );
   }
 }
 

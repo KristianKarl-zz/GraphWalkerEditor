@@ -3,18 +3,17 @@
 #include <math.h>
 
 #include "EdgeItem.h"
-#include "LabelItem.h"
 
 const qreal Pi = 3.14;
 
 EdgeItem::EdgeItem ( VertexItem* startItem, VertexItem* endItem,
     QGraphicsItem* parent, QGraphicsScene* scene )
-  : QGraphicsLineItem ( parent, scene ) {
+  : GraphicItem(), QGraphicsLineItem ( parent, scene ) {
   setFlag ( QGraphicsItem::ItemIsSelectable, true );
   myStartItem = startItem;
   myEndItem = endItem;
-  label = new LabelItem ( "<EdgeLabel>", this );
-  setZValue(-1000.0);
+  setZValue ( -1000.0 );
+  label->setParentItem ( this );
 }
 
 QRectF EdgeItem::boundingRect() const {
@@ -24,7 +23,7 @@ QRectF EdgeItem::boundingRect() const {
                 line().p2().y() - line().p1().y() ) );
   rect.normalized().adjusted ( -extra, -extra, extra, extra );
 
-  label->setPos(rect.center());
+  label->setPos ( rect.center() );
 
   return rect;
 }
@@ -44,6 +43,7 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
     QWidget* ) {
   if ( myStartItem->collidesWithItem ( myEndItem ) )
     return;
+
   if ( myEndItem->polygon().isEmpty() )
     return;
 
@@ -89,7 +89,8 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
 
   if ( isSelected() ) {
     setPen ( QPen ( myColor, 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
-  } else {
+  }
+  else {
     setPen ( QPen ( myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
   }
 
@@ -98,26 +99,25 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
 }
 
 void EdgeItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
+  qDebug() << Q_FUNC_INFO << getLabel();
+
   if ( mouseEvent->button() == Qt::RightButton ) {
     return;
-  } else if ( mouseEvent->button() == Qt::LeftButton ) {
-    setSelected(true);
   }
+  else
+    if ( mouseEvent->button() == Qt::LeftButton ) {
+      setSelected ( true );
+    }
+
   update();
 }
 
 void EdgeItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
+  qDebug() << Q_FUNC_INFO << getLabel();
+
   if ( event->button() != Qt::LeftButton )
     return;
 
   label->mouseDoubleClickEvent ( event );
-}
-
-void EdgeItem::setLabel ( const QString& str ) {
-  label->setPlainText ( str );
-}
-
-QString EdgeItem::getLabel() {
-  return label->toPlainText();
 }
 

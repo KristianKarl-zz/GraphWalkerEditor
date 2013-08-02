@@ -81,9 +81,9 @@ void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
 void GraphWalkerScene::newGraph() {
   graph.clear();
   clear();
-  VertexItem* item = new VertexItem (graph.newNode());
-  item->setLabel("Start");
-  item->setKeyWord(GrapwWalker::START_NODE);
+  VertexItem* item = new VertexItem ( graph.newNode() );
+  item->setLabel ( "Start" );
+  item->setKeyWord ( GrapwWalker::START_NODE );
   addItem ( item );
 }
 
@@ -103,22 +103,10 @@ VertexItem* GraphWalkerScene::getNode ( ogdf::node source ) {
 
 void GraphWalkerScene::setLineColor ( const QColor& color ) {
   myLineColor = color;
-
-  if ( isItemChange ( EdgeItem::Type ) ) {
-    EdgeItem* item = qgraphicsitem_cast<EdgeItem*> ( selectedItems().first() );
-    item->setColor ( myLineColor );
-    update();
-  }
 }
 
 void GraphWalkerScene::setItemColor ( const QColor& color ) {
   myItemColor = color;
-
-  if ( isItemChange ( VertexItem::Type ) ) {
-    VertexItem* item =
-      qgraphicsitem_cast<VertexItem*> ( selectedItems().first() );
-    item->setBrush ( myItemColor );
-  }
 }
 
 void GraphWalkerScene::setMode ( Mode mode ) {
@@ -140,11 +128,6 @@ void GraphWalkerScene::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) 
     item = new VertexItem ( v );
     item->setPos ( mouseEvent->scenePos() );
     item->setLabel ( "<VertexLabel>" );
-
-    graphAttributes.x ( v ) = item->pos().x();
-    graphAttributes.y ( v ) = item->pos().y();
-    //graphAttributes.label ( item->getLabel().toStdString().c_str() );
-
     addItem ( item );
     emit itemInserted ( item );
     break;
@@ -191,8 +174,8 @@ void GraphWalkerScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent 
     delete line;
 
     if ( startItems.count() > 0 && endItems.count() > 0 &&
-         startItems.first()->type() == VertexItem::Type &&
-         endItems.first()->type() == VertexItem::Type &&
+         dynamic_cast<VertexItem*> ( startItems.first() ) &&
+         dynamic_cast<VertexItem*> ( endItems.first() ) &&
          startItems.first() != endItems.first() ) {
       VertexItem* startItem = qgraphicsitem_cast<VertexItem*> ( startItems.first() );
       VertexItem* endItem = qgraphicsitem_cast<VertexItem*> ( endItems.first() );
@@ -218,15 +201,6 @@ void GraphWalkerScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent 
   line = 0;
   QGraphicsScene::mouseReleaseEvent ( mouseEvent );
   update();
-}
-
-bool GraphWalkerScene::isItemChange ( int type ) {
-  foreach ( QGraphicsItem * item, selectedItems() ) {
-    if ( item->type() == type )
-      return true;
-  }
-
-  return false;
 }
 
 void GraphWalkerScene::hierarchicalLayout() {

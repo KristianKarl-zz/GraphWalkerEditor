@@ -3,6 +3,7 @@
 
 #include <QGraphicsLineItem>
 
+#include "GraphicItem.h"
 #include "VertexItem.h"
 
 QT_BEGIN_NAMESPACE
@@ -16,16 +17,11 @@ QT_END_NAMESPACE
 
 class LabelItem;
 
-class EdgeItem : public QGraphicsLineItem {
+class EdgeItem : public GraphicItem, public QGraphicsLineItem {
   public:
-    enum { Type = UserType + 4 };
-
     EdgeItem ( VertexItem* startItem, VertexItem* endItem,
                QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
 
-    int type() const {
-      return Type;
-    }
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void setColor ( const QColor& color ) {
@@ -38,9 +34,6 @@ class EdgeItem : public QGraphicsLineItem {
       return myEndItem;
     }
 
-    void setLabel ( const QString& );
-    QString getLabel();
-
     void updatePosition();
 
   protected:
@@ -52,9 +45,7 @@ class EdgeItem : public QGraphicsLineItem {
   private:
     VertexItem* myStartItem;
     VertexItem* myEndItem;
-    QColor myColor;
     QPolygonF arrowHead;
-    LabelItem* label;
 };
 
 #endif

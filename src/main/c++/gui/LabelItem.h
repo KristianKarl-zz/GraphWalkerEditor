@@ -7,13 +7,7 @@ class LabelItem : public QGraphicsTextItem {
     Q_OBJECT
 
   public:
-    enum { Type = UserType + 3 };
-
     LabelItem ( const QString& str, QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
-
-    int type() const {
-      return Type;
-    }
 
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event );
 

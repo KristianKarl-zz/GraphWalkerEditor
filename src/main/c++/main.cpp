@@ -103,13 +103,19 @@ fatal    - Log fatals" );
 
       if ( vm["log_level"].as<std::string> () == "debug" ) {
         logLevel = 3;
-      } else if ( vm["log_level"].as<std::string> () == "warning" ) {
-        logLevel = 2;
-      } else if ( vm["log_level"].as<std::string> () == "critical" ) {
-        logLevel = 1;
-      } else if ( vm["log_level"].as<std::string> () == "fatal" ) {
-        logLevel = 0;
       }
+      else
+        if ( vm["log_level"].as<std::string> () == "warning" ) {
+          logLevel = 2;
+        }
+        else
+          if ( vm["log_level"].as<std::string> () == "critical" ) {
+            logLevel = 1;
+          }
+          else
+            if ( vm["log_level"].as<std::string> () == "fatal" ) {
+              logLevel = 0;
+            }
     }
     else {
       std::cout << "Log level was not set. Default is: debug" << std::endl;

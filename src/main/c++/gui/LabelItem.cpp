@@ -19,6 +19,8 @@ QVariant LabelItem::itemChange ( GraphicsItemChange change, const QVariant& valu
 }
 
 void LabelItem::keyPressEvent ( QKeyEvent* event ) {
+  qDebug() << Q_FUNC_INFO << toPlainText();
+
   if ( event->key() != Qt::Key_Space && event->key() != Qt::Key_Tab && event->key() != Qt::Key_Return )
     QGraphicsTextItem::keyPressEvent ( event );
 
@@ -28,6 +30,7 @@ void LabelItem::keyPressEvent ( QKeyEvent* event ) {
 }
 
 void LabelItem::focusOutEvent ( QFocusEvent* event ) {
+  qDebug() << Q_FUNC_INFO << toPlainText();
   setTextInteractionFlags ( Qt::NoTextInteraction );
   setFlag ( QGraphicsItem::ItemIsSelectable, false );
   scene()->update();
@@ -38,10 +41,11 @@ void LabelItem::focusOutEvent ( QFocusEvent* event ) {
   setTextCursor ( c );
 
   emit lostFocus ( this );
-  qDebug() << toPlainText() << " lost focus";
 }
 
 void LabelItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
+  qDebug() << Q_FUNC_INFO << toPlainText();
+
   if ( event->button() != Qt::LeftButton )
     return;
 

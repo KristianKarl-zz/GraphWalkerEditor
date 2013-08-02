@@ -2,25 +2,24 @@
 
 #include "VertexItem.h"
 #include "EdgeItem.h"
-#include "LabelItem.h"
 
 VertexItem::VertexItem ( ogdf::node n, QGraphicsItem* parent, QGraphicsScene* scene )
-  : ogdf_node ( n ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
-  init ( "" );
+  : ogdf_node ( n ), GraphicItem(), QGraphicsPolygonItem ( parent, scene ), blocked ( false ), switchModel ( false ) {
+  init ( );
 }
 
 VertexItem::VertexItem ( const QString& name, QGraphicsItem* parent, QGraphicsScene* scene )
-  : ogdf_node ( 0 ), QGraphicsPolygonItem ( parent, scene ), keywords ( 0 ), blocked ( false ), switchModel ( false ) {
-  init ( name );
+  : ogdf_node ( 0 ), GraphicItem(),  QGraphicsPolygonItem ( parent, scene ), blocked ( false ), switchModel ( false ) {
+  init ();
 }
 
-void VertexItem::init ( const QString& name ) {
+void VertexItem::init () {
+  label->setParentItem ( this );
+
   setFlag ( QGraphicsItem::ItemIsMovable, true );
   setFlag ( QGraphicsItem::ItemIsSelectable, true );
   setFlag ( QGraphicsItem::ItemSendsGeometryChanges, true );
   setAcceptHoverEvents ( true );
-
-  label = new LabelItem ( name, this );
 
   blockAction = new QAction ( "&Blocked", this );
   blockAction->setStatusTip ( "This will exclude this vertex from the graph." );
@@ -68,7 +67,7 @@ QPainterPath VertexItem::shape() const {
   return path;
 }
 
-void VertexItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*, QWidget* ) {
+void VertexItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* i, QWidget* w ) {
   if ( getKeyWords() & GrapwWalker::START_NODE ) {
     painter->setBrush ( Qt::green );
   }
@@ -141,15 +140,9 @@ QVariant VertexItem::itemChange ( GraphicsItemChange change, const QVariant& val
   return value;
 }
 
-void VertexItem::addKeyWord ( const GrapwWalker::Keywords& keyword ) {
-  keywords |= keyword;
-}
-
-void VertexItem::setKeyWord ( const GrapwWalker::Keywords& keyword ) {
-  keywords = keyword;
-}
-
 void VertexItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
+  qDebug() << Q_FUNC_INFO << getLabel();
+
   if ( getKeyWords() & GrapwWalker::START_NODE )
     return;
 
@@ -157,6 +150,8 @@ void VertexItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* mouseEvent ) 
 }
 
 void VertexItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
+  qDebug() << Q_FUNC_INFO << getLabel();
+
   if ( mouseEvent->button() != Qt::RightButton ) {
     return;
   }
@@ -179,21 +174,13 @@ void VertexItem::toggleSwitchModel() {
 }
 
 void VertexItem::hoverEnterEvent ( QGraphicsSceneHoverEvent* event ) {
-  qDebug() << "hoverEnterEvent in " << label->toPlainText();
+  //qDebug() << Q_FUNC_INFO << getLabel();
 }
 
 void VertexItem::hoverLeaveEvent ( QGraphicsSceneHoverEvent* event ) {
-  qDebug() << "hoverLeaveEvent in " << label->toPlainText();
-}
-
-void VertexItem::setLabel ( const QString& str ) {
-  label->setPlainText ( str );
+  //qDebug() << Q_FUNC_INFO << getLabel();
 }
 
 ogdf::node VertexItem::get_ogdf_node() {
   return ogdf_node;
-}
-
-QString VertexItem::getLabel() {
-  return label->toPlainText();
 }

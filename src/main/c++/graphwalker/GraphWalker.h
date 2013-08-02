@@ -8,7 +8,7 @@ class GrapwWalker {
         STOP_NODE = 4,
         BLOCKED = 8,
         SWITCH_MODEL = 16
-    };
+                  };
 };
 
 #endif
