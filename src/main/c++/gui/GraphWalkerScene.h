@@ -49,8 +49,8 @@ class GraphWalkerScene : public QGraphicsScene {
     void mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent );
 
   private:
-    void loadGraph();
-    void loadScene();
+    void populateGraphFromScene();
+    void populateSceneFromGraph();
     VertexItem* getNode ( ogdf::node source );
 
     ogdf::GraphAttributes graphAttributes;

@@ -45,7 +45,7 @@ void MainWindow::initialize() {
 
 void MainWindow::open() {
   QString fileName = QFileDialog::getOpenFileName ( this, tr (
-        "Open GML file" ), currentFile.absoluteFilePath(), tr ( "GML file (*.gml)" ) );
+        "Open GML file" ), currentFile.absoluteFilePath(), tr ( "Graph files (*.gml *.graphml)" ) );
 
   if ( !fileName.isEmpty() ) {
     if ( currentFile.fileName() == fileName ) {

@@ -104,10 +104,9 @@ void EdgeItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
   if ( mouseEvent->button() == Qt::RightButton ) {
     return;
   }
-  else
-    if ( mouseEvent->button() == Qt::LeftButton ) {
-      setSelected ( true );
-    }
+  else if ( mouseEvent->button() == Qt::LeftButton ) {
+    setSelected ( true );
+  }
 
   update();
 }

@@ -30,6 +30,7 @@ endif()
 FILE(GLOB_RECURSE SOURCE_FILES src/main/c++/*.cpp)
 FILE(GLOB_RECURSE MOC_HDR_FILES src/main/c++/gui/*.h)
 FILE(GLOB_RECURSE TEST_SOURCE_FILES src/test/c++/*.cpp)
+FILE(GLOB_RECURSE GRAPHWALKER_SOURCE_FILES src/main/c++/graphwalker/*.cpp)
 
 include_directories( ..  src src/main/c++/gui, src/main/c++/graphwalker , src/main/c++/ogdf )
 set(GWE_RESOURCES src/main/resources/gwe.qrc)
@@ -42,6 +43,8 @@ QT4_WRAP_CPP( MOC_SOURCE_FILES ${MOC_HDR_FILES} )
 
 # Set Open Graph Drawing Framework libaries
 set(OGDF_LIBRARY -lOGDF -lCOIN)
+# Set TinyXML libary
+set(TINYXML_LIBRARY -ltinyxml)
 
 add_executable( gwe
                 ${SOURCE_FILES}
@@ -49,6 +52,7 @@ add_executable( gwe
                 ${GWE_RESOURCES_RCC} )
 
 target_link_libraries( gwe
+                      ${TINYXML_LIBRARY}
                       ${OGDF_LIBRARY}
                       ${QT_LIBRARIES}
                       ${Boost_LIBRARIES} )
@@ -56,8 +60,10 @@ target_link_libraries( gwe
 
 ENABLE_TESTING()
 add_executable( gwe_unit_test
-                ${TEST_SOURCE_FILES} )
+                ${TEST_SOURCE_FILES}
+                ${GRAPHWALKER_SOURCE_FILES} )
 target_link_libraries( gwe_unit_test
+                      ${TINYXML_LIBRARY}
                       ${OGDF_LIBRARY}
                       ${QT_LIBRARIES}
                       ${Boost_LIBRARIES} )

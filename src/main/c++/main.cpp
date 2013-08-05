@@ -25,37 +25,37 @@ void debugMessageOutput ( QtMsgType type, const char* msg ) {
   logStream << currentSystemTime();
 
   switch ( type ) {
-  case QtDebugMsg:
+    case QtDebugMsg:
 
-    if ( logLevel >= 3 ) {
-      logStream << " DEBUG - " << msg << std::endl;
-    }
+      if ( logLevel >= 3 ) {
+        logStream << " DEBUG - " << msg << std::endl;
+      }
 
-    break;
+      break;
 
-  case QtWarningMsg:
+    case QtWarningMsg:
 
-    if ( logLevel >= 2 ) {
-      logStream << " WARNING - " << msg << std::endl;
-    }
+      if ( logLevel >= 2 ) {
+        logStream << " WARNING - " << msg << std::endl;
+      }
 
-    break;
+      break;
 
-  case QtCriticalMsg:
+    case QtCriticalMsg:
 
-    if ( logLevel >= 1 ) {
-      logStream << " CRITICAL - " << msg << std::endl;
-    }
+      if ( logLevel >= 1 ) {
+        logStream << " CRITICAL - " << msg << std::endl;
+      }
 
-    break;
+      break;
 
-  case QtFatalMsg:
+    case QtFatalMsg:
 
-    if ( logLevel >= 0 ) {
-      logStream << " FATAL - " << msg << std::endl;
-    }
+      if ( logLevel >= 0 ) {
+        logStream << " FATAL - " << msg << std::endl;
+      }
 
-    abort();
+      abort();
   }
 }
 
@@ -104,18 +104,15 @@ fatal    - Log fatals" );
       if ( vm["log_level"].as<std::string> () == "debug" ) {
         logLevel = 3;
       }
-      else
-        if ( vm["log_level"].as<std::string> () == "warning" ) {
-          logLevel = 2;
-        }
-        else
-          if ( vm["log_level"].as<std::string> () == "critical" ) {
-            logLevel = 1;
-          }
-          else
-            if ( vm["log_level"].as<std::string> () == "fatal" ) {
-              logLevel = 0;
-            }
+      else if ( vm["log_level"].as<std::string> () == "warning" ) {
+        logLevel = 2;
+      }
+      else if ( vm["log_level"].as<std::string> () == "critical" ) {
+        logLevel = 1;
+      }
+      else if ( vm["log_level"].as<std::string> () == "fatal" ) {
+        logLevel = 0;
+      }
     }
     else {
       std::cout << "Log level was not set. Default is: debug" << std::endl;

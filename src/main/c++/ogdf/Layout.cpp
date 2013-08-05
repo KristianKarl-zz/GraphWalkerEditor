@@ -10,7 +10,7 @@
 using namespace ogdf;
 
 void Layout::hierarchical ( ogdf::GraphAttributes& GA ) {
-  qDebug() << "Start performing hierarchical layout operation";
+  qDebug() << Q_FUNC_INFO << "Start performing hierarchical layout operation";
   SugiyamaLayout SL;
   SL.setRanking ( new OptimalRanking );
   SL.setCrossMin ( new MedianHeuristic );
@@ -22,5 +22,5 @@ void Layout::hierarchical ( ogdf::GraphAttributes& GA ) {
   SL.setLayout ( ohl );
 
   SL.call ( GA );
-  qDebug() << "Hierarchical layout operation done!";
+  qDebug() << Q_FUNC_INFO << "Hierarchical layout operation done!";
 }

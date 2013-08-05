@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <boost/graph/graph_concepts.hpp>
 #include <ogdf/fileformats/GraphIO.h>
 
 #include "GraphWalkerScene.h"
@@ -19,10 +20,11 @@ GraphWalkerScene::GraphWalkerScene ( QObject* parent )
   myTextColor = Qt::black;
   myLineColor = Qt::black;
 
-  loadGraph();
+  populateGraphFromScene();
 }
 
-void GraphWalkerScene::loadGraph() {
+void GraphWalkerScene::populateGraphFromScene() {
+  qDebug() << Q_FUNC_INFO;
   graph.clear();
 
   foreach ( QGraphicsItem * item, items() ) {
@@ -50,16 +52,23 @@ void GraphWalkerScene::loadGraph() {
   }
 }
 
-void GraphWalkerScene::loadScene() {
+void GraphWalkerScene::populateSceneFromGraph() {
+  qDebug() << Q_FUNC_INFO;
+  clear();
+
   ogdf::node n;
   forall_nodes ( n, graph ) {
-    foreach ( QGraphicsItem * item, items() ) {
-      VertexItem* vertex = dynamic_cast<VertexItem*> ( item );
+    VertexItem* item = new VertexItem ( n );
+    item->setPos ( graphAttributes.x ( n ), graphAttributes.y ( n ) );
+    item->setLabel ( graphAttributes.label ( n ).c_str() );
+    addItem ( item );
+  }
 
-      if ( vertex && vertex->get_ogdf_node() == n ) {
-        vertex->setPos ( graphAttributes.x ( n ), graphAttributes.y ( n ) );
-      }
-    }
+  ogdf::edge e;
+  forall_edges ( e, graph ) {
+    EdgeItem* item = new EdgeItem ( getNode ( e->source() ), getNode ( e->target() ) );
+    item->setLabel ( graphAttributes.label ( e ).c_str() );
+    addItem ( item );
   }
 
   setSceneRect ( QRectF ( 0,
@@ -70,12 +79,29 @@ void GraphWalkerScene::loadScene() {
 }
 
 void GraphWalkerScene::loadGraph ( const QFileInfo& file_name ) {
-  if ( ! ogdf::GraphIO::readGML ( graphAttributes, graph, file_name.absoluteFilePath().toStdString() ) ) {
-    qWarning() << "Could not read: " << file_name.absoluteFilePath();
+
+  if ( QString::compare ( file_name.suffix(), "gml", Qt::CaseInsensitive ) == 0 ) {
+    if ( !ogdf::GraphIO::readGML ( graphAttributes, graph, file_name.absoluteFilePath().toStdString() ) ) {
+      qWarning() << Q_FUNC_INFO << "Could not read:" << file_name.absoluteFilePath();
+      return;
+    }
+  }
+  else  if ( QString::compare ( file_name.suffix(), "graphml", Qt::CaseInsensitive ) == 0 ) {
+    GraphWalker gw;
+
+    if ( !gw.readGraphml ( &graphAttributes, &graph, file_name.absoluteFilePath() ) ) {
+      qWarning() << Q_FUNC_INFO << "Could not read:" << file_name.absoluteFilePath();
+      return;
+    }
+  }
+  else {
+    qWarning() << Q_FUNC_INFO << "Graph file format" << file_name.suffix() << "is not supported.";
     return;
   }
 
-  loadScene();
+  qDebug() << Q_FUNC_INFO << "Loaded graph with" << graph.numberOfNodes() << "nodes, and" << graph.numberOfEdges() << "edges";
+
+  populateSceneFromGraph();
 }
 
 void GraphWalkerScene::newGraph() {
@@ -83,7 +109,7 @@ void GraphWalkerScene::newGraph() {
   clear();
   VertexItem* item = new VertexItem ( graph.newNode() );
   item->setLabel ( "Start" );
-  item->setKeyWord ( GrapwWalker::START_NODE );
+  item->setKeyWord ( GraphWalker::START_NODE );
   addItem ( item );
 }
 
@@ -123,25 +149,25 @@ void GraphWalkerScene::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) 
   ogdf::node v = 0;
 
   switch ( myMode ) {
-  case InsertItem:
-    v = graph.newNode();
-    item = new VertexItem ( v );
-    item->setPos ( mouseEvent->scenePos() );
-    item->setLabel ( "<VertexLabel>" );
-    addItem ( item );
-    emit itemInserted ( item );
-    break;
+    case InsertItem:
+      v = graph.newNode();
+      item = new VertexItem ( v );
+      item->setPos ( mouseEvent->scenePos() );
+      item->setLabel ( "<VertexLabel>" );
+      addItem ( item );
+      emit itemInserted ( item );
+      break;
 
-  case InsertLine:
-    line = new QGraphicsLineItem ( QLineF ( mouseEvent->scenePos(),
-        mouseEvent->scenePos() ) );
-    line->setPen ( QPen ( myLineColor, 2 ) );
-    addItem ( line );
-    break;
+    case InsertLine:
+      line = new QGraphicsLineItem ( QLineF ( mouseEvent->scenePos(),
+          mouseEvent->scenePos() ) );
+      line->setPen ( QPen ( myLineColor, 2 ) );
+      addItem ( line );
+      break;
 
-  default
-      :
-    ;
+    default
+        :
+      ;
   }
 
   QGraphicsScene::mousePressEvent ( mouseEvent );
@@ -152,10 +178,9 @@ void GraphWalkerScene::mouseMoveEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
     QLineF newLine ( line->line().p1(), mouseEvent->scenePos() );
     line->setLine ( newLine );
   }
-  else
-    if ( myMode == MoveItem ) {
-      QGraphicsScene::mouseMoveEvent ( mouseEvent );
-    }
+  else if ( myMode == MoveItem ) {
+    QGraphicsScene::mouseMoveEvent ( mouseEvent );
+  }
 }
 
 void GraphWalkerScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
@@ -180,8 +205,8 @@ void GraphWalkerScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent 
       VertexItem* startItem = qgraphicsitem_cast<VertexItem*> ( startItems.first() );
       VertexItem* endItem = qgraphicsitem_cast<VertexItem*> ( endItems.first() );
 
-      if ( endItem->getKeyWords() & GrapwWalker::START_NODE ||
-           ( startItem->getKeyWords() & GrapwWalker::START_NODE && startItem->getEdges().count() > 0 ) ) {
+      if ( endItem->getKeyWords() & GraphWalker::START_NODE ||
+           ( startItem->getKeyWords() & GraphWalker::START_NODE && startItem->getEdges().count() > 0 ) ) {
         QMessageBox::information ( 0, "No can do!", "The Start node can only have 1 out-edge, and no in-edges." );
       }
       else {
@@ -204,8 +229,8 @@ void GraphWalkerScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* mouseEvent 
 }
 
 void GraphWalkerScene::hierarchicalLayout() {
-  loadGraph();
+  populateGraphFromScene();
   Layout::hierarchical ( graphAttributes );
-  loadScene();
+  populateSceneFromGraph();
 }
 

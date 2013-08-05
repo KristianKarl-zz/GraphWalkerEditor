@@ -10,11 +10,11 @@ GraphicItem::GraphicItem ( const QString& name )
   label = new LabelItem ( name );
 }
 
-void GraphicItem::addKeyWord ( const GrapwWalker::Keywords& keyword ) {
+void GraphicItem::addKeyWord ( const GraphWalker::Keywords& keyword ) {
   keywords |= keyword;
 }
 
-void GraphicItem::setKeyWord ( const GrapwWalker::Keywords& keyword ) {
+void GraphicItem::setKeyWord ( const GraphWalker::Keywords& keyword ) {
   keywords = keyword;
 }
 

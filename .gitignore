@@ -1,3 +1,6 @@
 *~
 build/
 *.kdev4
+
+src/test/resources/Login-layout.gml
+src/test/resources/unix-history-layout.gml

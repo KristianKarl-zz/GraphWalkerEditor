@@ -4,12 +4,12 @@
 #include "EdgeItem.h"
 
 VertexItem::VertexItem ( ogdf::node n, QGraphicsItem* parent, QGraphicsScene* scene )
-  : ogdf_node ( n ), GraphicItem(), QGraphicsPolygonItem ( parent, scene ), blocked ( false ), switchModel ( false ) {
+  : GraphicItem(), QGraphicsPolygonItem ( parent, scene ), ogdf_node ( n ), blocked ( false ), switchModel ( false ) {
   init ( );
 }
 
 VertexItem::VertexItem ( const QString& name, QGraphicsItem* parent, QGraphicsScene* scene )
-  : ogdf_node ( 0 ), GraphicItem(),  QGraphicsPolygonItem ( parent, scene ), blocked ( false ), switchModel ( false ) {
+  : GraphicItem(), QGraphicsPolygonItem ( parent, scene ), ogdf_node ( 0 ), blocked ( false ), switchModel ( false ) {
   init ();
 }
 
@@ -68,7 +68,7 @@ QPainterPath VertexItem::shape() const {
 }
 
 void VertexItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* i, QWidget* w ) {
-  if ( getKeyWords() & GrapwWalker::START_NODE ) {
+  if ( getKeyWords() & GraphWalker::START_NODE ) {
     painter->setBrush ( Qt::green );
   }
   else {
@@ -143,7 +143,7 @@ QVariant VertexItem::itemChange ( GraphicsItemChange change, const QVariant& val
 void VertexItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
   qDebug() << Q_FUNC_INFO << getLabel();
 
-  if ( getKeyWords() & GrapwWalker::START_NODE )
+  if ( getKeyWords() & GraphWalker::START_NODE )
     return;
 
   label->mouseDoubleClickEvent ( mouseEvent );
@@ -156,7 +156,7 @@ void VertexItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
     return;
   }
 
-  if ( getKeyWords() & GrapwWalker::START_NODE ) {
+  if ( getKeyWords() & GraphWalker::START_NODE ) {
     return;
   }
 
