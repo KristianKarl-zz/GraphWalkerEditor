@@ -53,8 +53,8 @@ class GraphWalkerScene : public QGraphicsScene {
     void populateSceneFromGraph();
     VertexItem* getNode ( ogdf::node source );
 
-    ogdf::GraphAttributes graphAttributes;
-    ogdf::Graph graph;
+    ogdf::GraphAttributes GA;
+    ogdf::Graph G;
 
     Mode myMode;
     bool leftButtonDown;

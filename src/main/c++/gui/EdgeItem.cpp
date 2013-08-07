@@ -94,7 +94,13 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
     setPen ( QPen ( myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
   }
 
-  painter->drawLine ( line() );
+  QVector<QPointF> polyPoints;
+  polyPoints << myStartItem->pos();
+  foreach( QPointF p, bends ) {
+    polyPoints << p;
+  }
+  polyPoints << myEndItem->pos();
+  painter->drawPolyline( polyPoints );
   painter->drawPolygon ( arrowHead );
 }
 

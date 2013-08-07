@@ -36,6 +36,10 @@ class EdgeItem : public GraphicItem, public QGraphicsLineItem {
 
     void updatePosition();
 
+    QList<QPointF>& getBends() {
+      return bends;
+    }
+
   protected:
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event );
     void mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent );
@@ -46,6 +50,7 @@ class EdgeItem : public GraphicItem, public QGraphicsLineItem {
     VertexItem* myStartItem;
     VertexItem* myEndItem;
     QPolygonF arrowHead;
+    QList<QPointF> bends;
 };
 
 #endif
