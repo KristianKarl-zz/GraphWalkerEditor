@@ -9,10 +9,10 @@ GraphWalkerScene::GraphWalkerScene(QObject* parent)
   : QGraphicsScene(parent) {
   qDebug() << Q_FUNC_INFO;
   GA = ogdf::GraphAttributes(G,
-                             ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics |
-                             ogdf::GraphAttributes::nodeLabel | ogdf::GraphAttributes::edgeStyle |
-                             ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
-                             ogdf::GraphAttributes::edgeLabel);
+       ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics |
+       ogdf::GraphAttributes::nodeLabel | ogdf::GraphAttributes::edgeStyle |
+       ogdf::GraphAttributes::nodeStyle | ogdf::GraphAttributes::nodeTemplate |
+       ogdf::GraphAttributes::edgeLabel);
 }
 
 void GraphWalkerScene::populateGraphFromScene() {
@@ -66,7 +66,7 @@ void GraphWalkerScene::populateSceneFromGraph() {
     ogdf::ListConstIterator<ogdf::DPoint> it;
 
     for (it = pl.begin(); it.valid(); ++it) {
-      item->getBends().append ( QPointF ( ( *it ).m_x, ( *it ).m_y ) );
+      item->getBends().append(QPointF((*it).m_x, (*it).m_y));
     }
 
     addItem(item);
@@ -75,9 +75,9 @@ void GraphWalkerScene::populateSceneFromGraph() {
   qDebug() << Q_FUNC_INFO << GA.boundingBox().width() << GA.boundingBox().height();
 
   setSceneRect(QRectF(0,
-                      0,
-                      GA.boundingBox().width(),
-                      GA.boundingBox().height()));
+               0,
+               GA.boundingBox().width(),
+               GA.boundingBox().height()));
   update();
 }
 
@@ -90,21 +90,22 @@ void GraphWalkerScene::loadGraph(const QFileInfo& file_name) {
       return;
     }
 
-  } else
-    if (QString::compare(file_name.suffix(), "graphml", Qt::CaseInsensitive) == 0) {
-      GraphWalker gw;
+  }
+  else if (QString::compare(file_name.suffix(), "graphml", Qt::CaseInsensitive) == 0) {
+    GraphWalker gw;
 
-      qDebug() << G.numberOfNodes() << G.numberOfEdges();
+    qDebug() << G.numberOfNodes() << G.numberOfEdges();
 
-      if (!gw.readGraphml(&GA, &G, file_name.absoluteFilePath())) {
-        qWarning() << Q_FUNC_INFO << "Could not read:" << file_name.absoluteFilePath();
-        return;
-      }
-
-    } else {
-      qWarning() << Q_FUNC_INFO << "Graph file format" << file_name.suffix() << "is not supported.";
+    if (!gw.readGraphml(&GA, &G, file_name.absoluteFilePath())) {
+      qWarning() << Q_FUNC_INFO << "Could not read:" << file_name.absoluteFilePath();
       return;
     }
+
+  }
+  else {
+    qWarning() << Q_FUNC_INFO << "Graph file format" << file_name.suffix() << "is not supported.";
+    return;
+  }
 
   qDebug() << Q_FUNC_INFO << "Loaded graph with" << G.numberOfNodes() << "nodes, and" << G.numberOfEdges() << "edges";
 

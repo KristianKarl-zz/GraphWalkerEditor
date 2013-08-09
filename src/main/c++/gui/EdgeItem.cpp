@@ -23,6 +23,9 @@ EdgeItem::EdgeItem(VertexItem* startItem, VertexItem* endItem)
   srcVertex->addEdgeItem(this);
   dstVertex->addEdgeItem(this);
   adjust();
+
+  setZValue(-1);
+  label->setParentItem(this);
 }
 
 void EdgeItem::adjust() {
@@ -56,6 +59,8 @@ QPainterPath EdgeItem::shape() const {
   foreach (QPointF p, bends) {
     path.lineTo(p);
   }
+
+  label->setPos(path.pointAtPercent(0.5));
 
   path.lineTo(dstPoint);
   return path;
