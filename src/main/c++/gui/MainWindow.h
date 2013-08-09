@@ -44,6 +44,8 @@ class MainWindow : public QMainWindow
     QAction* exitAction;
 
     QAction* hierarchicalLayoutAction;
+    QAction* energyBasedLayoutAction;
+    QAction* orthogonalLayoutAction;
 
     QAction* aboutAction;
 

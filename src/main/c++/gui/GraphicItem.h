@@ -13,7 +13,7 @@ class GraphicItem : public QObject  {
     GraphicItem ( const QString& label );
 
     void setLabel ( const QString& );
-    QString getLabel();
+    QString getLabel() const;
 
     void setKeyWord ( const GraphWalker::Keywords& );
     void addKeyWord ( const GraphWalker::Keywords& );

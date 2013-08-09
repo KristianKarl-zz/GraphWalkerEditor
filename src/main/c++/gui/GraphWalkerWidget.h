@@ -15,10 +15,13 @@ class GraphWalkerWidget : public QGraphicsView {
 
     void loadGraph(const QFileInfo& graph_file);
 
+    GraphWalkerScene* getScene() {
+      return scene;
+    }
+
   public slots:
     void zoomIn();
     void zoomOut();
-    void hierarchicalLayout();
 
   protected:
     void wheelEvent(QWheelEvent* event);

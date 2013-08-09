@@ -19,6 +19,8 @@ class GraphWalkerScene : public QGraphicsScene {
 
   public slots:
     void hierarchicalLayout();
+    void energyBasedLayout();
+    void orthogonalLayout();
 
   private:
     void populateGraphFromScene();

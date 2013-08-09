@@ -130,4 +130,16 @@ void GraphWalkerScene::hierarchicalLayout() {
   populateSceneFromGraph();
 }
 
+void GraphWalkerScene::energyBasedLayout() {
+  populateGraphFromScene();
+  Layout::energyBased(GA);
+  populateSceneFromGraph();
+}
+
+void GraphWalkerScene::orthogonalLayout() {
+  populateGraphFromScene();
+  Layout::orthogonal(GA);
+  populateSceneFromGraph();
+}
+
 

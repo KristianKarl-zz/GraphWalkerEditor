@@ -25,10 +25,6 @@ void GraphWalkerWidget::loadGraph(const QFileInfo& graph_file) {
   scene->loadGraph(graph_file);
 }
 
-void GraphWalkerWidget::hierarchicalLayout() {
-  scene->hierarchicalLayout();
-}
-
 void GraphWalkerWidget::wheelEvent(QWheelEvent* event) {
   scaleView(pow((double)2, -event->delta() / 240.0));
 }

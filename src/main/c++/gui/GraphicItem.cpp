@@ -18,7 +18,7 @@ void GraphicItem::setKeyWord ( const GraphWalker::Keywords& keyword ) {
   keywords = keyword;
 }
 
-QString GraphicItem::getLabel() {
+QString GraphicItem::getLabel() const {
   return label->toPlainText();
 }
 

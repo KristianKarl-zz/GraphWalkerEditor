@@ -60,8 +60,16 @@ void MainWindow::createActions() {
   connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   hierarchicalLayoutAction = new QAction(tr("&Hierarchical layout"), this);
-  hierarchicalLayoutAction->setStatusTip(tr("Peforms an automatic hierarchical layout of the graph"));
-  connect(hierarchicalLayoutAction, SIGNAL(triggered()), widget, SLOT(hierarchicalLayout()));
+  hierarchicalLayoutAction->setStatusTip(tr("Peforms an hierarchical layout of the graph"));
+  connect(hierarchicalLayoutAction, SIGNAL(triggered()), widget->getScene(), SLOT(hierarchicalLayout()));
+
+  energyBasedLayoutAction = new QAction(tr("&Energy-based layout"), this);
+  energyBasedLayoutAction->setStatusTip(tr("Peforms an energy-based layout of the graph"));
+  connect(energyBasedLayoutAction, SIGNAL(triggered()), widget->getScene(), SLOT(energyBasedLayout()));
+
+  orthogonalLayoutAction = new QAction(tr("&Orthogonal layout"), this);
+  orthogonalLayoutAction->setStatusTip(tr("Peforms an orthogonal layout of the graph"));
+  connect(orthogonalLayoutAction, SIGNAL(triggered()), widget->getScene(), SLOT(orthogonalLayout()));
 
   exitAction = new QAction(tr("E&xit"), this);
   exitAction->setShortcuts(QKeySequence::Quit);
@@ -78,5 +86,7 @@ void MainWindow::createMenus() {
 
   layoutMenu = menuBar()->addMenu(tr("&Layout"));
   layoutMenu->addAction(hierarchicalLayoutAction);
+  layoutMenu->addAction(energyBasedLayoutAction);
+  layoutMenu->addAction(orthogonalLayoutAction);
 }
 

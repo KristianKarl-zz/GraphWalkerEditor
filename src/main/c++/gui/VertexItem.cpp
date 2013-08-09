@@ -38,23 +38,26 @@ ogdf::node VertexItem::get_ogdf_node() {
 }
 
 QRectF VertexItem::boundingRect() const {
-  qreal adjust = 2;
-  return QRectF(-10 - adjust, -10 - adjust,
-                23 + adjust, 23 + adjust);
+  QFontMetrics fontMetrics(label->font());
+  QRectF boundingRect = fontMetrics.boundingRect(getLabel());
+  label->setPos(-boundingRect.width() / 2, -boundingRect.height() + 4);
+  QRectF rect = QRectF(-boundingRect.width() / 2, -boundingRect.height() / 2, boundingRect.width(), boundingRect.height()).adjusted(-2, -2, 10, 2);
+
+  return rect;
 }
 
 QPainterPath VertexItem::shape() const {
   QPainterPath path;
-  path.addEllipse(-10, -10, 20, 20);
+  path.addRoundedRect ( boundingRect(), 10, 10 );
   return path;
 }
 
 void VertexItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*) {
   painter->setPen(Qt::NoPen);
   painter->setBrush(Qt::darkGray);
-  painter->drawEllipse(-7, -7, 20, 20);
+  painter->drawPolygon ( shape().toFillPolygon() );
 
-  QRadialGradient gradient(-3, -3, 10);
+  QRadialGradient gradient(-3, -3, 100);
 
   if (option->state & QStyle::State_Sunken) {
     gradient.setCenter(3, 3);
@@ -62,15 +65,16 @@ void VertexItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
     gradient.setColorAt(1, QColor(Qt::yellow).light(120));
     gradient.setColorAt(0, QColor(Qt::darkYellow).light(120));
 
-  } else {
+  }
+  else {
     gradient.setColorAt(0, Qt::yellow);
     gradient.setColorAt(1, Qt::darkYellow);
   }
 
   painter->setBrush(gradient);
-
   painter->setPen(QPen(Qt::black, 0));
-  painter->drawEllipse(-10, -10, 20, 20);
+  painter->drawPolygon ( shape().toFillPolygon() );
+  painter->drawText(boundingRect().adjusted(8,2,0,0), getLabel());
 }
 
 QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant& value) {
