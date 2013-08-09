@@ -39,13 +39,12 @@ void EdgeItem::updatePosition() {
   setLine ( line );
 }
 
-void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
-    QWidget* ) {
+void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*, QWidget* ) {
   if ( myStartItem->collidesWithItem ( myEndItem ) )
     return;
 
-  if ( myEndItem->polygon().isEmpty() )
-    return;
+   if ( myEndItem->polygon().isEmpty() )
+     return;
 
   QPen myPen = pen();
   myPen.setColor ( myColor );
@@ -75,6 +74,7 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
   setLine ( QLineF ( intersectPoint, myStartItem->pos() ) );
 
   double angle = ::acos ( line().dx() / line().length() );
+  qDebug() << angle;
 
   if ( line().dy() >= 0 )
     angle = ( Pi * 3 ) - angle;
@@ -86,6 +86,7 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
 
   arrowHead.clear();
   arrowHead << line().p1() << arrowP1 << arrowP2;
+  qDebug() << arrowHead;
 
   if ( isSelected() ) {
     setPen ( QPen ( myColor, 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
@@ -96,11 +97,13 @@ void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*,
 
   QVector<QPointF> polyPoints;
   polyPoints << myStartItem->pos();
-  foreach( QPointF p, bends ) {
+
+  foreach ( QPointF p, bends ) {
     polyPoints << p;
   }
+
   polyPoints << myEndItem->pos();
-  painter->drawPolyline( polyPoints );
+  painter->drawPolyline ( polyPoints );
   painter->drawPolygon ( arrowHead );
 }
 
@@ -125,4 +128,5 @@ void EdgeItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
 
   label->mouseDoubleClickEvent ( event );
 }
+
 

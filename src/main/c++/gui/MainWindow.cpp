@@ -4,7 +4,6 @@
 
 #include "MainWindow.h"
 #include "VertexItem.h"
-#include "GraphWalkerWidget.h"
 #include "GraphWalkerScene.h"
 #include "EdgeItem.h"
 
@@ -29,7 +28,8 @@ void MainWindow::initialize() {
   createToolbars();
 
   QHBoxLayout* layout = new QHBoxLayout;
-  view = new GraphWalkerWidget ( scene );
+//   view = new GraphWalkerWidget ( scene );
+  view = new QGraphicsView(scene);
   layout->addWidget ( view );
 
   QWidget* widget = new QWidget;

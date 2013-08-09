@@ -54,7 +54,8 @@ class MainWindow : public QMainWindow {
     QIcon createColorIcon ( QColor color );
 
     GraphWalkerScene* scene;
-    GraphWalkerWidget* view;
+    QGraphicsView* view;
+    //GraphWalkerWidget* view;
 
     QAction* newAct;
     QAction* openAct;
