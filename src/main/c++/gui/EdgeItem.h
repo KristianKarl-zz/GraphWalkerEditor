@@ -1,56 +1,40 @@
 #ifndef ARROW_H
 #define ARROW_H
 
-#include <QGraphicsLineItem>
+#include <QtGui/QGraphicsItem>
 
 #include "GraphicItem.h"
-#include "VertexItem.h"
 
-QT_BEGIN_NAMESPACE
-class QGraphicsPolygonItem;
-class QGraphicsLineItem;
-class QGraphicsScene;
-class QRectF;
-class QGraphicsSceneMouseEvent;
-class QPainterPath;
-QT_END_NAMESPACE
+class VertexItem;
 
-class LabelItem;
-
-class EdgeItem : public GraphicItem, public QGraphicsLineItem {
+class EdgeItem : public GraphicItem, public QGraphicsItem {
   public:
-    EdgeItem ( VertexItem* startItem, VertexItem* endItem,
-               QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
+    EdgeItem(VertexItem* startItem, VertexItem* endItem);
 
-    QRectF boundingRect() const;
-    QPainterPath shape() const;
-    void setColor ( const QColor& color ) {
-      myColor = color;
-    }
     VertexItem* startItem() const {
-      return myStartItem;
+      return srcVertex;
     }
     VertexItem* endItem() const {
-      return myEndItem;
+      return dstVertex;
     }
+    void adjust();
 
-    void updatePosition();
-
-    QList<QPointF>& getBends() {
-      return bends;
+    enum { Type = UserType + 2 };
+    int type() const {
+      return Type;
     }
 
   protected:
-    void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event );
-    void mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent );
-    void paint ( QPainter* painter, const QStyleOptionGraphicsItem* option,
-                 QWidget* widget = 0 );
+    QRectF boundingRect() const;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
   private:
-    VertexItem* myStartItem;
-    VertexItem* myEndItem;
-    QPolygonF arrowHead;
-    QList<QPointF> bends;
+    VertexItem* srcVertex;
+    VertexItem* dstVertex;
+
+    QPointF srcPoint;
+    QPointF dstPoint;
+    qreal arrowSize;
 };
 
 #endif

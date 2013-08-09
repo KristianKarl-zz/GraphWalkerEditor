@@ -1,0 +1,32 @@
+#ifndef GRAPHWALKERWIDGET_H
+#define GRAPHWALKERWIDGET_H
+
+#include <QtGui/QGraphicsView>
+#include <QtCore/QFileInfo>
+
+class GraphWalkerScene;
+
+class GraphWalkerWidget : public QGraphicsView {
+
+    Q_OBJECT
+
+  public:
+    GraphWalkerWidget(QWidget* parent = 0);
+
+    void loadGraph(const QFileInfo& graph_file);
+
+  public slots:
+    void zoomIn();
+    void zoomOut();
+    void hierarchicalLayout();
+
+  protected:
+    void wheelEvent(QWheelEvent* event);
+    void drawBackground(QPainter* painter, const QRectF& rect);
+
+    void scaleView(qreal scaleFactor);
+
+    GraphWalkerScene* scene;
+};
+
+#endif // GRAPHWALKERWIDGET_H

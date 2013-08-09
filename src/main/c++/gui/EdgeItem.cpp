@@ -1,132 +1,90 @@
 #include <QtGui>
-
+#include <boost/exception/all.hpp> 
 #include <math.h>
 
 #include "EdgeItem.h"
+#include "VertexItem.h"
 
-const qreal Pi = 3.14;
+static const double Pi = 3.14159265358979323846264338327950288419717;
+static double TwoPi = 2.0 * Pi;
 
-EdgeItem::EdgeItem ( VertexItem* startItem, VertexItem* endItem,
-    QGraphicsItem* parent, QGraphicsScene* scene )
-  : GraphicItem(), QGraphicsLineItem ( parent, scene ) {
-  setFlag ( QGraphicsItem::ItemIsSelectable, true );
-  myStartItem = startItem;
-  myEndItem = endItem;
-  setZValue ( -1000.0 );
-  label->setParentItem ( this );
+EdgeItem::EdgeItem(VertexItem* startItem, VertexItem* endItem)
+  : arrowSize(10) {
+
+  setAcceptedMouseButtons(0);
+
+  if (startItem == NULL || endItem == NULL) {
+    throw;
+  }
+
+  srcVertex = startItem;
+  dstVertex = endItem;
+  srcVertex->addEdgeItem(this);
+  dstVertex->addEdgeItem(this);
+  adjust();
+}
+
+void EdgeItem::adjust() {
+  if (!srcVertex || !dstVertex)
+    return;
+
+  QLineF line(mapFromItem(srcVertex, 0, 0), mapFromItem(dstVertex, 0, 0));
+  qreal length = line.length();
+
+  prepareGeometryChange();
+
+  if (length > qreal(20.)) {
+    QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
+    srcPoint = line.p1() + edgeOffset;
+    dstPoint = line.p2() - edgeOffset;
+
+  } else {
+    srcPoint = dstPoint = line.p1();
+  }
 }
 
 QRectF EdgeItem::boundingRect() const {
-  qreal extra = ( pen().width() + 20 ) / 2.0;
+  if (!srcVertex || !dstVertex)
+    return QRectF();
 
-  QRectF rect ( line().p1(), QSizeF ( line().p2().x() - line().p1().x(),
-                line().p2().y() - line().p1().y() ) );
-  rect.normalized().adjusted ( -extra, -extra, extra, extra );
+  qreal penWidth = 1;
+  qreal extra = (penWidth + arrowSize) / 2.0;
 
-  label->setPos ( rect.center() );
-
-  return rect;
+  return QRectF(srcPoint, QSizeF(dstPoint.x() - srcPoint.x(),
+                                 dstPoint.y() - srcPoint.y()))
+         .normalized()
+         .adjusted(-extra, -extra, extra, extra);
 }
 
-QPainterPath EdgeItem::shape() const {
-  QPainterPath path = QGraphicsLineItem::shape();
-  path.addPolygon ( arrowHead );
-  return path;
-}
-
-void EdgeItem::updatePosition() {
-  QLineF line ( mapFromItem ( myStartItem, 0, 0 ), mapFromItem ( myEndItem, 0, 0 ) );
-  setLine ( line );
-}
-
-void EdgeItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*, QWidget* ) {
-  if ( myStartItem->collidesWithItem ( myEndItem ) )
+void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+  if (!srcVertex || !dstVertex)
     return;
 
-   if ( myEndItem->polygon().isEmpty() )
-     return;
+  QLineF line(srcPoint, dstPoint);
 
-  QPen myPen = pen();
-  myPen.setColor ( myColor );
-  qreal arrowSize = 20;
-  painter->setPen ( myPen );
-  painter->setBrush ( myColor );
-
-  QLineF centerLine ( myStartItem->pos(), myEndItem->pos() );
-  QPolygonF endPolygon = myEndItem->polygon();
-  QPointF p1 = endPolygon.first() + myEndItem->pos();
-  QPointF p2;
-  QPointF intersectPoint;
-  QLineF polyLine;
-
-  for ( int i = 1; i < endPolygon.count(); ++i ) {
-    p2 = endPolygon.at ( i ) + myEndItem->pos();
-    polyLine = QLineF ( p1, p2 );
-    QLineF::IntersectType intersectType =
-      polyLine.intersect ( centerLine, &intersectPoint );
-
-    if ( intersectType == QLineF::BoundedIntersection )
-      break;
-
-    p1 = p2;
-  }
-
-  setLine ( QLineF ( intersectPoint, myStartItem->pos() ) );
-
-  double angle = ::acos ( line().dx() / line().length() );
-  qDebug() << angle;
-
-  if ( line().dy() >= 0 )
-    angle = ( Pi * 3 ) - angle;
-
-  QPointF arrowP1 = line().p1() + QPointF ( sin ( angle + Pi / 3 ) * arrowSize,
-      cos ( angle + Pi / 3 ) * arrowSize );
-  QPointF arrowP2 = line().p1() + QPointF ( sin ( angle + Pi - Pi / 3 ) * arrowSize,
-      cos ( angle + Pi - Pi / 3 ) * arrowSize );
-
-  arrowHead.clear();
-  arrowHead << line().p1() << arrowP1 << arrowP2;
-  qDebug() << arrowHead;
-
-  if ( isSelected() ) {
-    setPen ( QPen ( myColor, 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
-  }
-  else {
-    setPen ( QPen ( myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
-  }
-
-  QVector<QPointF> polyPoints;
-  polyPoints << myStartItem->pos();
-
-  foreach ( QPointF p, bends ) {
-    polyPoints << p;
-  }
-
-  polyPoints << myEndItem->pos();
-  painter->drawPolyline ( polyPoints );
-  painter->drawPolygon ( arrowHead );
-}
-
-void EdgeItem::mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent ) {
-  qDebug() << Q_FUNC_INFO << getLabel();
-
-  if ( mouseEvent->button() == Qt::RightButton ) {
-    return;
-  }
-  else if ( mouseEvent->button() == Qt::LeftButton ) {
-    setSelected ( true );
-  }
-
-  update();
-}
-
-void EdgeItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
-  qDebug() << Q_FUNC_INFO << getLabel();
-
-  if ( event->button() != Qt::LeftButton )
+  if (qFuzzyCompare(line.length(), qreal(0.)))
     return;
 
-  label->mouseDoubleClickEvent ( event );
+  // Draw the line itself
+  painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  painter->drawLine(line);
+
+  // Draw the arrows
+  double angle = ::acos(line.dx() / line.length());
+
+  if (line.dy() >= 0)
+    angle = TwoPi - angle;
+
+  QPointF srcVertexArrowP1 = srcPoint + QPointF(sin(angle + Pi / 3) * arrowSize,
+                             cos(angle + Pi / 3) * arrowSize);
+  QPointF srcVertexArrowP2 = srcPoint + QPointF(sin(angle + Pi - Pi / 3) * arrowSize,
+                             cos(angle + Pi - Pi / 3) * arrowSize);
+  QPointF dstVertexArrowP1 = dstPoint + QPointF(sin(angle - Pi / 3) * arrowSize,
+                             cos(angle - Pi / 3) * arrowSize);
+  QPointF dstVertexArrowP2 = dstPoint + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
+                             cos(angle - Pi + Pi / 3) * arrowSize);
+
+  painter->setBrush(Qt::black);
+  painter->drawPolygon(QPolygonF() << line.p1() << srcVertexArrowP1 << srcVertexArrowP2);
+  painter->drawPolygon(QPolygonF() << line.p2() << dstVertexArrowP1 << dstVertexArrowP2);
 }
-
-

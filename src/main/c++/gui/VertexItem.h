@@ -1,69 +1,48 @@
 #ifndef DIAGRAMITEM_H
 #define DIAGRAMITEM_H
 
-#include <QtGui>
+#include <QGraphicsItem>
 
 #include <ogdf/basic/Graph.h>
 
 #include "GraphicItem.h"
 
 class EdgeItem;
-class LabelItem;
 
-class VertexItem : public GraphicItem, public QGraphicsPolygonItem {
-    Q_OBJECT
-
+class VertexItem : public GraphicItem, public QGraphicsItem {
   public:
-    VertexItem ( ogdf::node n, QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
-    VertexItem ( const QString& label,  QGraphicsItem* parent = 0, QGraphicsScene* scene = 0 );
+    VertexItem(ogdf::node n);
 
-    void removeEdgeItem ( EdgeItem* edge );
+    void removeEdgeItem(EdgeItem* edge);
     void removeEdgeItems();
-    void addEdgeItem ( EdgeItem* edge );
+    void addEdgeItem(EdgeItem* edge);
     QList<EdgeItem*> getEdges() {
       return edges;
     }
 
+    enum { Type = UserType + 1 };
+    int type() const {
+      return Type;
+    }
+
     ogdf::node get_ogdf_node();
-    void set_ogdf_node ( ogdf::node n ) {
+    void set_ogdf_node(ogdf::node n) {
       ogdf_node = n;
     }
 
-    /**
-     * Used by the edges to calculate where the arrow heads
-     * should end.
-     */
-    QPolygonF polygon() const {
-      return myPolygon;
-    }
-
-    QRectF boundingRect () const;
-
-  public slots:
-    void toggleBlocked();
-    void toggleSwitchModel();
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
   protected:
-    void hoverEnterEvent ( QGraphicsSceneHoverEvent* event );
-    void hoverLeaveEvent ( QGraphicsSceneHoverEvent* event );
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value);
 
-    void mousePressEvent ( QGraphicsSceneMouseEvent* mouseEvent );
-    void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* );
-    void contextMenuEvent ( QPoint );
-    QVariant itemChange ( GraphicsItemChange change, const QVariant& value );
-    void paint ( QPainter* painter, const QStyleOptionGraphicsItem* option,
-                 QWidget* widget = 0 );
-    QPainterPath shape () const;
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 
   private:
-    void init ();
-    QAction* blockAction;
-    QAction* switchModelAction;
-
     ogdf::node ogdf_node;
-    QPolygonF myPolygon;
     QList<EdgeItem*> edges;
-    bool blocked;
     bool switchModel;
 };
 

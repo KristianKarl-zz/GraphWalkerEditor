@@ -25,6 +25,7 @@ class GraphicItem : public QObject  {
     LabelItem* label;
     int keywords;
     QColor myColor;
+    bool blocked;
 };
 
 #endif // GRAPHICITEM_H

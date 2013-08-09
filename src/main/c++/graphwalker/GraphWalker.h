@@ -1,15 +1,14 @@
 #ifndef GRAPHWALKER_H
 #define GRAPHWALKER_H
 
-#include <ogdf/basic/Graph.h>
-#include <ogdf/basic/GraphAttributes.h>
-#include <ogdf/basic/Graph_d.h>
-
 #include <QtCore/QString>
 #include <QtCore/QHash>
 
 class TiXmlHandle;
 class TiXmlElement;
+
+#include <ogdf/basic/Graph.h>
+#include <ogdf/basic/GraphAttributes.h>
 
 class GraphWalker {
   public:
@@ -36,3 +35,4 @@ class GraphWalker {
 };
 
 #endif
+
