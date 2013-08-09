@@ -1,5 +1,5 @@
 #include <QtGui>
-#include <boost/exception/all.hpp> 
+#include <boost/exception/all.hpp>
 #include <math.h>
 
 #include "EdgeItem.h"
@@ -10,6 +10,7 @@ static double TwoPi = 2.0 * Pi;
 
 EdgeItem::EdgeItem(VertexItem* startItem, VertexItem* endItem)
   : arrowSize(10) {
+  qDebug() << Q_FUNC_INFO;
 
   setAcceptedMouseButtons(0);
 
@@ -38,22 +39,34 @@ void EdgeItem::adjust() {
     srcPoint = line.p1() + edgeOffset;
     dstPoint = line.p2() - edgeOffset;
 
-  } else {
+  }
+  else {
     srcPoint = dstPoint = line.p1();
   }
+}
+
+QPainterPath EdgeItem::shape() const {
+  QPainterPath path;
+
+  if (!srcVertex || !dstVertex)
+    return path;
+
+  path.moveTo(srcPoint);
+
+  foreach (QPointF p, bends) {
+    path.lineTo(p);
+  }
+
+  path.lineTo(dstPoint);
+  return path;
 }
 
 QRectF EdgeItem::boundingRect() const {
   if (!srcVertex || !dstVertex)
     return QRectF();
 
-  qreal penWidth = 1;
-  qreal extra = (penWidth + arrowSize) / 2.0;
-
-  return QRectF(srcPoint, QSizeF(dstPoint.x() - srcPoint.x(),
-                                 dstPoint.y() - srcPoint.y()))
-         .normalized()
-         .adjusted(-extra, -extra, extra, extra);
+  // Not perfect, it does not always cover the arrow heads.
+  return shape().boundingRect();
 }
 
 void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
@@ -67,7 +80,16 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
 
   // Draw the line itself
   painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  painter->drawLine(line);
+
+  QVector<QPointF> polyPoints;
+  polyPoints << srcPoint;
+
+  foreach (QPointF p, bends) {
+    polyPoints << p;
+  }
+
+  polyPoints << dstPoint;
+  painter->drawPolyline(polyPoints);
 
   // Draw the arrows
   double angle = ::acos(line.dx() / line.length());
@@ -75,16 +97,11 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
   if (line.dy() >= 0)
     angle = TwoPi - angle;
 
-  QPointF srcVertexArrowP1 = srcPoint + QPointF(sin(angle + Pi / 3) * arrowSize,
-                             cos(angle + Pi / 3) * arrowSize);
-  QPointF srcVertexArrowP2 = srcPoint + QPointF(sin(angle + Pi - Pi / 3) * arrowSize,
-                             cos(angle + Pi - Pi / 3) * arrowSize);
   QPointF dstVertexArrowP1 = dstPoint + QPointF(sin(angle - Pi / 3) * arrowSize,
-                             cos(angle - Pi / 3) * arrowSize);
+      cos(angle - Pi / 3) * arrowSize);
   QPointF dstVertexArrowP2 = dstPoint + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
-                             cos(angle - Pi + Pi / 3) * arrowSize);
+      cos(angle - Pi + Pi / 3) * arrowSize);
 
   painter->setBrush(Qt::black);
-  painter->drawPolygon(QPolygonF() << line.p1() << srcVertexArrowP1 << srcVertexArrowP2);
   painter->drawPolygon(QPolygonF() << line.p2() << dstVertexArrowP1 << dstVertexArrowP2);
 }

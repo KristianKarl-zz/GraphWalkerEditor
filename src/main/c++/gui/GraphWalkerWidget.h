@@ -25,8 +25,6 @@ class GraphWalkerWidget : public QGraphicsView {
 
   protected:
     void wheelEvent(QWheelEvent* event);
-    void drawBackground(QPainter* painter, const QRectF& rect);
-
     void scaleView(qreal scaleFactor);
 
     GraphWalkerScene* scene;

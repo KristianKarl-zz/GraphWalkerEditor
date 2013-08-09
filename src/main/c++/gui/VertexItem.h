@@ -39,6 +39,7 @@ class VertexItem : public GraphicItem, public QGraphicsItem {
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
 
   private:
     ogdf::node ogdf_node;

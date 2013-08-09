@@ -24,8 +24,13 @@ class EdgeItem : public GraphicItem, public QGraphicsItem {
       return Type;
     }
 
+    QList<QPointF>& getBends() {
+      return bends;
+    }
+
   protected:
     QRectF boundingRect() const;
+    QPainterPath shape() const;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
   private:
@@ -35,6 +40,7 @@ class EdgeItem : public GraphicItem, public QGraphicsItem {
     QPointF srcPoint;
     QPointF dstPoint;
     qreal arrowSize;
+    QList<QPointF> bends;
 };
 
 #endif

@@ -6,14 +6,17 @@
 
 VertexItem::VertexItem(ogdf::node n)
   : ogdf_node(n) {
+  qDebug() << Q_FUNC_INFO;
 
   setFlag(ItemIsMovable);
   setFlag(ItemSendsGeometryChanges);
   setCacheMode(DeviceCoordinateCache);
   setZValue(-1);
+  label->setParentItem ( this );
 }
 
 void VertexItem::removeEdgeItem(EdgeItem* edge) {
+  qDebug() << Q_FUNC_INFO;
   int index = edges.indexOf(edge);
 
   if (index != -1)
@@ -21,6 +24,7 @@ void VertexItem::removeEdgeItem(EdgeItem* edge) {
 }
 
 void VertexItem::removeEdgeItems() {
+  qDebug() << Q_FUNC_INFO;
   foreach (EdgeItem * edge, edges) {
     edge->startItem()->removeEdgeItem(edge);
     edge->endItem()->removeEdgeItem(edge);
@@ -30,6 +34,7 @@ void VertexItem::removeEdgeItems() {
 }
 
 void VertexItem::addEdgeItem(EdgeItem* edge) {
+  qDebug() << Q_FUNC_INFO;
   edges.append(edge);
 }
 
@@ -74,10 +79,10 @@ void VertexItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
   painter->setBrush(gradient);
   painter->setPen(QPen(Qt::black, 0));
   painter->drawPolygon ( shape().toFillPolygon() );
-  painter->drawText(boundingRect().adjusted(8,2,0,0), getLabel());
 }
 
 QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant& value) {
+  qDebug() << Q_FUNC_INFO;
   switch (change) {
     case ItemPositionHasChanged:
       foreach (EdgeItem * edge, edges)
@@ -94,11 +99,22 @@ QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant& value
 }
 
 void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+  qDebug() << Q_FUNC_INFO;
   update();
   QGraphicsItem::mousePressEvent(event);
 }
 
 void VertexItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+  qDebug() << Q_FUNC_INFO;
   update();
   QGraphicsItem::mouseReleaseEvent(event);
 }
+
+void VertexItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
+  qDebug() << Q_FUNC_INFO;
+  if ( getKeyWords() & GraphWalker::START_NODE )
+    return;
+
+  label->mouseDoubleClickEvent ( event );
+}
+
