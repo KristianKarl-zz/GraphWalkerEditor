@@ -86,6 +86,7 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
   // Draw the line itself
   painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
+
   QVector<QPointF> polyPoints;
   polyPoints << srcPoint;
 
@@ -96,19 +97,38 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
   polyPoints << dstPoint;
   painter->drawPolyline(polyPoints);
 
-  // Draw the arrows
   // Last line segment
-  QLineF lastSegment(polyPoints[polyPoints.size()-2], polyPoints[polyPoints.size()-1]);
+  QLineF lastSegment(polyPoints[polyPoints.size() - 2], polyPoints[polyPoints.size() - 1]);
+
+  // Find intersection point
+  QPolygonF endPolygon = dstVertex->shape().toFillPolygon();
+  QPointF p1 = endPolygon.first() + dstPoint;
+  QPointF p2;
+  QPointF intersectPoint;
+  QLineF polyLine;
+
+  for (int i = 1; i < endPolygon.count(); ++i) {
+    p2 = endPolygon.at(i) + dstPoint;
+    polyLine = QLineF(p1, p2);
+    QLineF::IntersectType intersectType = polyLine.intersect(lastSegment, &intersectPoint);
+
+    if (intersectType == QLineF::BoundedIntersection)
+      break;
+
+    p1 = p2;
+  }
+
+  // Draw the arrows
   double angle = ::acos(lastSegment.dx() / lastSegment.length());
 
   if (lastSegment.dy() >= 0)
     angle = TwoPi - angle;
 
-  QPointF dstVertexArrowP1 = dstPoint + QPointF(sin(angle - Pi / 3) * arrowSize,
+  QPointF dstVertexArrowP1 = intersectPoint + QPointF(sin(angle - Pi / 3) * arrowSize,
       cos(angle - Pi / 3) * arrowSize);
-  QPointF dstVertexArrowP2 = dstPoint + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
+  QPointF dstVertexArrowP2 = intersectPoint + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
       cos(angle - Pi + Pi / 3) * arrowSize);
 
   painter->setBrush(Qt::black);
-  painter->drawPolygon(QPolygonF() << lastSegment.p2() << dstVertexArrowP1 << dstVertexArrowP2);
+  painter->drawPolygon(QPolygonF() << intersectPoint << dstVertexArrowP1 << dstVertexArrowP2);
 }

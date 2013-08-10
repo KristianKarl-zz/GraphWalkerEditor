@@ -11,7 +11,7 @@ VertexItem::VertexItem(ogdf::node n)
   setFlag(ItemIsMovable);
   setFlag(ItemSendsGeometryChanges);
   setCacheMode(DeviceCoordinateCache);
-  setZValue(-1);
+  setZValue(1);
   label->setParentItem(this);
 }
 
