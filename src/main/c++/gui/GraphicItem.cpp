@@ -24,4 +24,5 @@ QString GraphicItem::getLabel() const {
 
 void GraphicItem::setLabel ( const QString& str ) {
   label->setPlainText ( str );
+  label->setPos(label->parentItem()->boundingRect().topLeft());
 }

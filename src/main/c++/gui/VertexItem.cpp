@@ -44,7 +44,9 @@ ogdf::node VertexItem::get_ogdf_node() {
 }
 
 QRectF VertexItem::boundingRect() const {
-  return label->boundingRect();
+  QRectF rect = label->boundingRect();
+  rect.moveTo(-rect.width()/2, -rect.height()/2);
+  return rect;
 }
 
 QPainterPath VertexItem::shape() const {
