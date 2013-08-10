@@ -73,6 +73,7 @@ void GraphWalkerScene::populateSceneFromGraph() {
     for (it = pl.begin(); it.valid(); ++it) {
       item->getBends().append(QPointF((*it).m_x, (*it).m_y));
     }
+    item->adjust();
 
     addItem(item);
   }
