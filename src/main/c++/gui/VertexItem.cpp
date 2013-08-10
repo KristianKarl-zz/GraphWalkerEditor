@@ -12,7 +12,7 @@ VertexItem::VertexItem(ogdf::node n)
   setFlag(ItemSendsGeometryChanges);
   setCacheMode(DeviceCoordinateCache);
   setZValue(-1);
-  label->setParentItem ( this );
+  label->setParentItem(this);
 }
 
 void VertexItem::removeEdgeItem(EdgeItem* edge) {
@@ -25,6 +25,7 @@ void VertexItem::removeEdgeItem(EdgeItem* edge) {
 
 void VertexItem::removeEdgeItems() {
   qDebug() << Q_FUNC_INFO;
+
   foreach (EdgeItem * edge, edges) {
     edge->startItem()->removeEdgeItem(edge);
     edge->endItem()->removeEdgeItem(edge);
@@ -53,36 +54,49 @@ QRectF VertexItem::boundingRect() const {
 
 QPainterPath VertexItem::shape() const {
   QPainterPath path;
-  path.addRoundedRect ( boundingRect(), 10, 10 );
+  path.addRoundedRect(boundingRect(), 10, 10);
   return path;
 }
 
 void VertexItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*) {
   painter->setPen(Qt::NoPen);
   painter->setBrush(Qt::darkGray);
-  painter->drawPolygon ( shape().toFillPolygon() );
+  painter->drawPolygon(shape().toFillPolygon());
 
   QRadialGradient gradient(-3, -3, 100);
 
   if (option->state & QStyle::State_Sunken) {
     gradient.setCenter(3, 3);
     gradient.setFocalPoint(3, 3);
-    gradient.setColorAt(1, QColor(Qt::yellow).light(120));
-    gradient.setColorAt(0, QColor(Qt::darkYellow).light(120));
 
+    if (getKeyWords() & GraphWalker::START_NODE) {
+      gradient.setColorAt(1, QColor(Qt::green).light(120));
+      gradient.setColorAt(0, QColor(Qt::darkGreen).light(120));
+    }
+    else {
+      gradient.setColorAt(1, QColor(Qt::yellow).light(120));
+      gradient.setColorAt(0, QColor(Qt::darkYellow).light(120));
+    }
   }
   else {
-    gradient.setColorAt(0, Qt::yellow);
-    gradient.setColorAt(1, Qt::darkYellow);
+    if (getKeyWords() & GraphWalker::START_NODE) {
+      gradient.setColorAt(0, Qt::green);
+      gradient.setColorAt(1, Qt::darkGreen);
+    }
+    else {
+      gradient.setColorAt(0, Qt::yellow);
+      gradient.setColorAt(1, Qt::darkYellow);
+    }
   }
 
   painter->setBrush(gradient);
   painter->setPen(QPen(Qt::black, 0));
-  painter->drawPolygon ( shape().toFillPolygon() );
+  painter->drawPolygon(shape().toFillPolygon());
 }
 
 QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant& value) {
   qDebug() << Q_FUNC_INFO;
+
   switch (change) {
     case ItemPositionHasChanged:
       foreach (EdgeItem * edge, edges)
@@ -110,11 +124,12 @@ void VertexItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
   QGraphicsItem::mouseReleaseEvent(event);
 }
 
-void VertexItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent* event ) {
+void VertexItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
   qDebug() << Q_FUNC_INFO;
-  if ( getKeyWords() & GraphWalker::START_NODE )
+
+  if (getKeyWords() & GraphWalker::START_NODE)
     return;
 
-  label->mouseDoubleClickEvent ( event );
+  label->mouseDoubleClickEvent(event);
 }
 

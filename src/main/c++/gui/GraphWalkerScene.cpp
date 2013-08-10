@@ -53,6 +53,11 @@ void GraphWalkerScene::populateSceneFromGraph() {
     VertexItem* item = new VertexItem(n);
     item->setPos(GA.x(n), GA.y(n));
     item->setLabel(GA.label(n).c_str());
+
+    if (item->getLabel().compare("START", Qt::CaseInsensitive)==0) {
+      item->setKeyWord(GraphWalker::START_NODE);
+    }
+
     addItem(item);
   }
 
