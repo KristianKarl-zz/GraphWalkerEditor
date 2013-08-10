@@ -46,6 +46,8 @@ void EdgeItem::adjust() {
   else {
     srcPoint = dstPoint = line.p1();
   }
+
+  label->setPos(shape().pointAtPercent(0.5));
 }
 
 QPainterPath EdgeItem::shape() const {
@@ -59,8 +61,6 @@ QPainterPath EdgeItem::shape() const {
   foreach (QPointF p, bends) {
     path.lineTo(p);
   }
-
-  label->setPos(path.pointAtPercent(0.5));
 
   path.lineTo(dstPoint);
   return path;
@@ -97,9 +97,11 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
   painter->drawPolyline(polyPoints);
 
   // Draw the arrows
-  double angle = ::acos(line.dx() / line.length());
+  // Last line segment
+  QLineF lastSegment(polyPoints[polyPoints.size()-2], polyPoints[polyPoints.size()-1]);
+  double angle = ::acos(lastSegment.dx() / lastSegment.length());
 
-  if (line.dy() >= 0)
+  if (lastSegment.dy() >= 0)
     angle = TwoPi - angle;
 
   QPointF dstVertexArrowP1 = dstPoint + QPointF(sin(angle - Pi / 3) * arrowSize,
@@ -108,5 +110,5 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
       cos(angle - Pi + Pi / 3) * arrowSize);
 
   painter->setBrush(Qt::black);
-  painter->drawPolygon(QPolygonF() << line.p2() << dstVertexArrowP1 << dstVertexArrowP2);
+  painter->drawPolygon(QPolygonF() << lastSegment.p2() << dstVertexArrowP1 << dstVertexArrowP2);
 }
