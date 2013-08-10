@@ -102,13 +102,13 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
 
   // Find intersection point
   QPolygonF endPolygon = dstVertex->shape().toFillPolygon();
-  QPointF p1 = endPolygon.first() + dstPoint;
+  QPointF p1 = endPolygon.first() + mapFromItem(dstVertex, 0, 0);
   QPointF p2;
   QPointF intersectPoint;
   QLineF polyLine;
 
   for (int i = 1; i < endPolygon.count(); ++i) {
-    p2 = endPolygon.at(i) + dstPoint;
+    p2 = endPolygon.at(i) + mapFromItem(dstVertex, 0, 0);
     polyLine = QLineF(p1, p2);
     QLineF::IntersectType intersectType = polyLine.intersect(lastSegment, &intersectPoint);
 
@@ -131,4 +131,7 @@ void EdgeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget
 
   painter->setBrush(Qt::black);
   painter->drawPolygon(QPolygonF() << intersectPoint << dstVertexArrowP1 << dstVertexArrowP2);
+
+  painter->setPen(QPen(Qt::red, 1));
+  painter->drawPoint(intersectPoint);
 }
