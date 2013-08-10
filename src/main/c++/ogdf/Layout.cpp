@@ -26,7 +26,7 @@ void Layout::hierarchical(ogdf::GraphAttributes& GA) {
 
   ogdf::OptimalHierarchyLayout* ohl = new ogdf::OptimalHierarchyLayout;
   ohl->layerDistance(30.0);
-  ohl->nodeDistance(25.0);
+  ohl->nodeDistance(250.0);
   ohl->weightBalancing(0.8);
   SL.setLayout(ohl);
 
