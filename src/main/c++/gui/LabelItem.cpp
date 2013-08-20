@@ -8,6 +8,7 @@ LabelItem::LabelItem(const QString& str, QGraphicsItem* parent, QGraphicsScene* 
   setPlainText(str);
   setFlag(QGraphicsItem::ItemIsMovable, false);
   setFlag(QGraphicsItem::ItemIsSelectable, false);
+  setZValue(2);
 }
 
 QVariant LabelItem::itemChange(GraphicsItemChange change, const QVariant& value) {
@@ -23,7 +24,7 @@ void LabelItem::keyPressEvent(QKeyEvent* event) {
 
   if (event->key() != Qt::Key_Space && event->key() != Qt::Key_Tab && event->key() != Qt::Key_Return) {
     QGraphicsTextItem::keyPressEvent(event);
-    setPos(parentItem()->boundingRect().topLeft());
+    emit labelIsUpdated(this);
   }
 
   if (event->key() == Qt::Key_Return) {
@@ -64,3 +65,14 @@ void LabelItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
   c.select(QTextCursor::Document);
   setTextCursor(c);
 }
+
+
+QString LabelItem::getLabel() const {
+  return toPlainText();
+}
+
+void LabelItem::setLabel(const QString& str) {
+  setPlainText(str);
+  setPos(parentItem()->boundingRect().topLeft());
+}
+

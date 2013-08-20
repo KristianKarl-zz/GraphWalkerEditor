@@ -2,13 +2,13 @@
 #define GRAPHWALKER_H
 
 #include <QtCore/QString>
+#include <QtCore/QList>
 #include <QtCore/QHash>
 
 class TiXmlHandle;
 class TiXmlElement;
-
-#include <ogdf/basic/Graph.h>
-#include <ogdf/basic/GraphAttributes.h>
+class QGVScene;
+class QGVNode;
 
 class GraphWalker {
   public:
@@ -19,20 +19,19 @@ class GraphWalker {
         SWITCH_MODEL = 16
                   };
 
-    bool readGraphml ( ogdf::GraphAttributes* GA, ogdf::Graph* G, const QString& );
-    bool writeGraphml ( ogdf::GraphAttributes* GA, const QString& );
+    bool readGraphml(QGVScene*, const QString&);
+    bool writeGraphml(QGVScene*, const QString&);
 
   private:
 
-    void parseGraphml ( TiXmlHandle );
-    void parseNodes ( TiXmlElement* );
-    void parseEdges ( TiXmlElement* );
+    void parseGraphml(TiXmlHandle);
+    void parseNodes(TiXmlElement*);
+    void parseEdges(TiXmlElement*);
 
-    ogdf::GraphAttributes* GA;
-    ogdf::Graph* G;
-
-    QHash<QString, ogdf::node> nodeList;
+    QGVScene* scene;
+    QHash<QString, QGVNode*> nodeList;
 };
 
 #endif
+
 

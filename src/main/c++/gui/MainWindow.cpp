@@ -6,7 +6,7 @@
 #include "VertexItem.h"
 #include "EdgeItem.h"
 #include "GraphWalkerWidget.h"
-#include "GraphWalkerScene.h"
+#include "QGVScene.h"
 
 const int InsertTextButton = 10;
 
@@ -18,7 +18,12 @@ MainWindow::MainWindow() {
 MainWindow::MainWindow(const QString& graph_file) {
   qDebug() << Q_FUNC_INFO;
   initialize();
-  widget->loadGraph(graph_file);
+  currentFile = QFileInfo(graph_file);
+
+  if (widget->getScene()->loadGraph(currentFile)) {
+    widget->getScene()->applyLayout();
+    widget->fitInView(widget->getScene()->sceneRect(), Qt::KeepAspectRatio);
+  }
 }
 
 void MainWindow::initialize() {
@@ -34,20 +39,24 @@ void MainWindow::initialize() {
 void MainWindow::open() {
   qDebug() << Q_FUNC_INFO;
   QString fileName = QFileDialog::getOpenFileName(this, tr(
-                       "Open GML file"), currentFile.absoluteFilePath(), tr("Graph files (*.gml *.graphml)"));
+        "Open GML file"), currentFile.absoluteFilePath(), tr("Graph files (*.gml *.graphml)"));
 
   if (!fileName.isEmpty()) {
     if (currentFile.fileName() == fileName) {
       if (QMessageBox::warning(this,
-                               tr("GWE question"),
-                               tr("Do you want to reload from file?"),
-                               QMessageBox::No | QMessageBox::Yes) == QMessageBox::No) {
+          tr("GWE question"),
+          tr("Do you want to reload from file?"),
+          QMessageBox::No | QMessageBox::Yes) == QMessageBox::No) {
         return;
       }
     }
 
     currentFile = QFileInfo(fileName);
-    widget->loadGraph(currentFile);
+
+    if (widget->getScene()->loadGraph(currentFile)) {
+      widget->getScene()->applyLayout();
+      widget->fitInView(widget->getScene()->sceneRect(), Qt::KeepAspectRatio);
+    }
   }
 }
 
@@ -59,17 +68,9 @@ void MainWindow::createActions() {
   openAct->setStatusTip(tr("Open an existing file"));
   connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-  hierarchicalLayoutAction = new QAction(tr("&Hierarchical layout"), this);
-  hierarchicalLayoutAction->setStatusTip(tr("Peforms an hierarchical layout of the graph"));
-  connect(hierarchicalLayoutAction, SIGNAL(triggered()), widget->getScene(), SLOT(hierarchicalLayout()));
-
-  energyBasedLayoutAction = new QAction(tr("&Energy-based layout"), this);
-  energyBasedLayoutAction->setStatusTip(tr("Peforms an energy-based layout of the graph"));
-  connect(energyBasedLayoutAction, SIGNAL(triggered()), widget->getScene(), SLOT(energyBasedLayout()));
-
-  orthogonalLayoutAction = new QAction(tr("&Orthogonal layout"), this);
-  orthogonalLayoutAction->setStatusTip(tr("Peforms an orthogonal layout of the graph"));
-  connect(orthogonalLayoutAction, SIGNAL(triggered()), widget->getScene(), SLOT(orthogonalLayout()));
+  autoLayoutAction = new QAction(tr("&Auto layout"), this);
+  autoLayoutAction->setStatusTip(tr("Peforms an automatical layout of the graph"));
+  connect(autoLayoutAction, SIGNAL(triggered()), widget->getScene(), SLOT(autoLayout()));
 
   exitAction = new QAction(tr("E&xit"), this);
   exitAction->setShortcuts(QKeySequence::Quit);
@@ -85,8 +86,6 @@ void MainWindow::createMenus() {
   fileMenu->addAction(exitAction);
 
   layoutMenu = menuBar()->addMenu(tr("&Layout"));
-  layoutMenu->addAction(hierarchicalLayoutAction);
-  layoutMenu->addAction(energyBasedLayoutAction);
-  layoutMenu->addAction(orthogonalLayoutAction);
+  layoutMenu->addAction(autoLayoutAction);
 }
 

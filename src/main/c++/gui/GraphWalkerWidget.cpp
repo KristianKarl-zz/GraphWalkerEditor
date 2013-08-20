@@ -1,5 +1,5 @@
 #include "GraphWalkerWidget.h"
-#include "GraphWalkerScene.h"
+#include "QGVScene.h"
 
 #include <QtGui>
 
@@ -7,10 +7,11 @@
 
 GraphWalkerWidget::GraphWalkerWidget(QWidget* parent)
   : QGraphicsView(parent) {
+  qDebug() << Q_FUNC_INFO;
 
-  scene = new GraphWalkerScene(this);
-  scene->setItemIndexMethod(GraphWalkerScene::NoIndex);
-  scene->setSceneRect(-200, -200, 400, 400);
+  scene = new QGVScene(this);
+  scene->setItemIndexMethod(QGVScene::NoIndex);
+  //scene->setSceneRect(-200, -200, 400, 400);
   setScene(scene);
   setCacheMode(CacheBackground);
   setViewportUpdateMode(BoundingRectViewportUpdate);
@@ -19,10 +20,6 @@ GraphWalkerWidget::GraphWalkerWidget(QWidget* parent)
   scale(qreal(0.8), qreal(0.8));
   setMinimumSize(400, 400);
   setWindowTitle(tr("GraphWalker Editor"));
-}
-
-void GraphWalkerWidget::loadGraph(const QFileInfo& graph_file) {
-  scene->loadGraph(graph_file);
 }
 
 void GraphWalkerWidget::wheelEvent(QWheelEvent* event) {

@@ -9,15 +9,18 @@
 class GraphicItem : public QObject  {
   public:
 
-    GraphicItem ();
-    GraphicItem ( const QString& label );
+    GraphicItem();
+    GraphicItem(const QString& label);
 
-    void setLabel ( const QString& );
+    void setDescription(const QString&);
+    QString getDescription() const;
+
+    void setLabel(const QString&);
     QString getLabel() const;
 
-    void setKeyWord ( const GraphWalker::Keywords& );
-    void addKeyWord ( const GraphWalker::Keywords& );
-    int getKeyWords () {
+    void setKeyWord(const GraphWalker::Keywords&);
+    void addKeyWord(const GraphWalker::Keywords&);
+    int getKeyWords() {
       return keywords;
     }
 
@@ -25,7 +28,7 @@ class GraphicItem : public QObject  {
     LabelItem* label;
     int keywords;
     QColor myColor;
-    bool blocked;
+    QString description;
 };
 
 #endif // GRAPHICITEM_H

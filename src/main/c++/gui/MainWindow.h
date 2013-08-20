@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileInfo>
 
 #include "VertexItem.h"
 
@@ -22,8 +23,7 @@ class QAbstractButton;
 class QGraphicsView;
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
   public:
@@ -43,9 +43,7 @@ class MainWindow : public QMainWindow
     QAction* openAct;
     QAction* exitAction;
 
-    QAction* hierarchicalLayoutAction;
-    QAction* energyBasedLayoutAction;
-    QAction* orthogonalLayoutAction;
+    QAction* autoLayoutAction;
 
     QAction* aboutAction;
 

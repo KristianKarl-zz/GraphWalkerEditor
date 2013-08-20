@@ -3,9 +3,6 @@
 
 #include <QtGui>
 
-#include <ogdf/basic/Graph.h>
-#include <ogdf/basic/GraphAttributes.h>
-
 #include "VertexItem.h"
 
 class GraphWalkerScene : public QGraphicsScene {
@@ -13,9 +10,9 @@ class GraphWalkerScene : public QGraphicsScene {
 
   public:
 
-    GraphWalkerScene ( QObject* parent = 0 );
+    GraphWalkerScene(QObject* parent = 0);
 
-    void loadGraph ( const QFileInfo& file_name );
+    void loadGraph(const QFileInfo& file_name);
 
   public slots:
     void hierarchicalLayout();
@@ -25,10 +22,10 @@ class GraphWalkerScene : public QGraphicsScene {
   private:
     void populateGraphFromScene();
     void populateSceneFromGraph();
-    VertexItem* getNode ( ogdf::node source );
+    //VertexItem* getNode ( QGVNode* source );
 
-    ogdf::GraphAttributes GA;
-    ogdf::Graph G;
+//     QList<QGVNode*> _nodes;
+//     QList<QGVEdge*> _edges;
 };
 
 #endif

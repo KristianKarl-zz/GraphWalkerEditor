@@ -2,7 +2,7 @@
 
 #include <tinyxml.h>
 #include <QtCore/QDebug>
-#include <boost/graph/graph_concepts.hpp>
+#include "QGVScene.h"
 
 class TiXmlGeometry : public TiXmlVisitor {
   private:
@@ -26,13 +26,9 @@ class TiXmlGeometry : public TiXmlVisitor {
     }
 };
 
-bool GraphWalker::readGraphml(ogdf::GraphAttributes* ga, ogdf::Graph* g, const QString& file) {
+bool GraphWalker::readGraphml(QGVScene* scene, const QString& file) {
   qDebug() << Q_FUNC_INFO << "Start reading file:" << file;
-  qDebug() << g->numberOfNodes() << g->numberOfEdges();
-  GA = ga;
-  G = g;
-  g->clear();
-
+  this->scene = scene;
   TiXmlDocument doc(file.toStdString());
 
   if (!doc.LoadFile()) {
@@ -41,11 +37,11 @@ bool GraphWalker::readGraphml(ogdf::GraphAttributes* ga, ogdf::Graph* g, const Q
   }
 
   parseGraphml(TiXmlHandle(&doc));
-  qDebug() << Q_FUNC_INFO << "File reading is done! Loaded graph with" << g->numberOfNodes() << "nodes, and" << g->numberOfEdges() << "edges";
+  qDebug() << Q_FUNC_INFO << "File reading is done!";
   return true;
 }
 
-bool GraphWalker::writeGraphml(ogdf::GraphAttributes* GA, const QString& file) {
+bool GraphWalker::writeGraphml(QGVScene* scene, const QString& file) {
   return false;
 }
 
@@ -78,18 +74,6 @@ void GraphWalker::parseNodes(TiXmlElement* pElem) {
     }
 
     qDebug() << Q_FUNC_INFO << "Node:" << id;
-    nodeList[id] = G->newNode();
-
-    TiXmlGeometry geometry("y:Geometry");
-    pElem->Accept(&geometry);
-
-    if (geometry.element()) {
-      TiXmlElement* element = geometry.element();
-      GA->x(nodeList[id]) = atof(element->Attribute("x"));
-      GA->y(nodeList[id]) = atof(element->Attribute("y"));
-      GA->width(nodeList[id]) = atof(element->Attribute("width"));
-      GA->height(nodeList[id]) = atof(element->Attribute("height"));
-    }
 
     TiXmlGeometry label("y:NodeLabel");
     pElem->Accept(&label);
@@ -97,7 +81,18 @@ void GraphWalker::parseNodes(TiXmlElement* pElem) {
     if (label.element()) {
       TiXmlElement* element = label.element();
       qDebug() << Q_FUNC_INFO << "Node:" << element->GetText();
-      GA->label(nodeList[id]) = element->GetText();
+      nodeList[id] = scene->addNode(element->GetText());
+    }
+
+    TiXmlGeometry data("data");
+    pElem->Accept(&data);
+
+    if (data.element()) {
+      TiXmlElement* element = data.element();
+
+      if (QString(element->Attribute("key")).compare("d5") == 0) {
+        nodeList[id]->setDescription(element->GetText());
+      }
     }
   }
 }
@@ -114,15 +109,25 @@ void GraphWalker::parseEdges(TiXmlElement* pElem) {
     }
 
     qDebug() << Q_FUNC_INFO << "Edge:" << id << "from:" << src << "to:" << dst;
-    ogdf::edge e = G->newEdge(nodeList[src], nodeList[dst]);
-
     TiXmlGeometry label("y:EdgeLabel");
     pElem->Accept(&label);
 
+    QGVEdge* edge;
     if (label.element()) {
       TiXmlElement* element = label.element();
       qDebug() << Q_FUNC_INFO << "Edge:" << element->GetText();
-      GA->label(e) = element->GetText();
+      edge = scene->addEdge(nodeList[src], nodeList[dst], element->GetText());
+    }
+
+    TiXmlGeometry data("data");
+    pElem->Accept(&data);
+
+    if (data.element()) {
+      TiXmlElement* element = data.element();
+
+      if (QString(element->Attribute("key")).compare("d9") == 0) {
+        edge->setDescription(element->GetText());
+      }
     }
   }
 }

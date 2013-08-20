@@ -4,7 +4,7 @@
 #include <QtGui/QGraphicsView>
 #include <QtCore/QFileInfo>
 
-class GraphWalkerScene;
+class QGVScene;
 
 class GraphWalkerWidget : public QGraphicsView {
 
@@ -13,9 +13,7 @@ class GraphWalkerWidget : public QGraphicsView {
   public:
     GraphWalkerWidget(QWidget* parent = 0);
 
-    void loadGraph(const QFileInfo& graph_file);
-
-    GraphWalkerScene* getScene() {
+    QGVScene* getScene() {
       return scene;
     }
 
@@ -27,7 +25,7 @@ class GraphWalkerWidget : public QGraphicsView {
     void wheelEvent(QWheelEvent* event);
     void scaleView(qreal scaleFactor);
 
-    GraphWalkerScene* scene;
+    QGVScene* scene;
 };
 
 #endif // GRAPHWALKERWIDGET_H
