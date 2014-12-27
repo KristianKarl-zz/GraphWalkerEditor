@@ -6,13 +6,13 @@ A GraphWalker Editor
 Using this editor, you can create models to be used by GraphWalker. 
 GraphWalker uses a special syntax, which the editor will enforce.
 
-See http://graphwalker.org/documentation/syntax
+See http://graphwalker.org/docs
 
 ###Dependencies###
 
 Following development libraries need to be installed.
 
-OGDF - http://www.ogdf.net/doku.php
+OGDF - https://github.com/ogdf/ogdf
 
 QT4 - http://qt-project.org/
 
